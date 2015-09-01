@@ -32,5 +32,20 @@ test('nesting', function (t) {
     ast.children[4].children[1].children[1].children[1]
       .children[0].children[0].children[1]
   ]);
+  t.deepEqual(select(ast, 'paragraph > emphasis'), [
+    ast.children[2].children[0].children[1],
+    ast.children[3].children[1]
+  ]);
+  t.deepEqual(select(ast, 'paragraph emphasis > text'), [
+    ast.children[2].children[0].children[1].children[0],
+    ast.children[3].children[1].children[0],
+    ast.children[4].children[1].children[1].children[1]
+      .children[0].children[0].children[1].children[0]
+  ]);
+  t.deepEqual(select(ast, 'paragraph > emphasis text'), [
+    ast.children[2].children[0].children[1].children[0],
+    ast.children[3].children[1].children[0],
+    ast.children[3].children[1].children[1].children[0]
+  ]);
   t.end();
 });
