@@ -6,6 +6,13 @@ var select = require('..'),
 var test = require('tape');
 
 
+test('edge cases', function (t) {
+  t.deepEqual(select(ast, ''), []);
+  t.deepEqual(select(ast, '\t '), []);
+  t.end();
+});
+
+
 test('type selector', function (t) {
   t.equal(select(ast, 'root').length, 1);
   t.equal(select(ast, 'root')[0], ast);
