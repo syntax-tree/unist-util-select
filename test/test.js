@@ -1,7 +1,8 @@
 'use strict';
 
 var select = require('..'),
-    ast = require('./ast');
+    ast = require('./ast'),
+    path = require('./lib/path');
 
 var test = require('tape');
 
@@ -27,25 +28,23 @@ test('type selector', function (t) {
 test('nesting', function (t) {
   t.deepEqual(select(ast, 'root heading'), select(ast, 'heading'));
   t.deepEqual(select(ast, 'paragraph emphasis'), [
-    ast.children[2].children[0].children[1],
-    ast.children[3].children[1],
-    ast.children[4].children[1].children[1].children[1]
-      .children[0].children[0].children[1]
+    path(ast, [2, 0, 1]),
+    path(ast, [3, 1]),
+    path(ast, [4, 1, 1, 1, 0, 0, 1])
   ]);
   t.deepEqual(select(ast, 'paragraph > emphasis'), [
-    ast.children[2].children[0].children[1],
-    ast.children[3].children[1]
+    path(ast, [2, 0, 1]),
+    path(ast, [3, 1])
   ]);
   t.deepEqual(select(ast, 'paragraph emphasis > text'), [
-    ast.children[2].children[0].children[1].children[0],
-    ast.children[3].children[1].children[0],
-    ast.children[4].children[1].children[1].children[1]
-      .children[0].children[0].children[1].children[0]
+    path(ast, [2, 0, 1, 0]),
+    path(ast, [3, 1, 0]),
+    path(ast, [4, 1, 1, 1, 0, 0, 1, 0])
   ]);
   t.deepEqual(select(ast, 'paragraph > emphasis text'), [
-    ast.children[2].children[0].children[1].children[0],
-    ast.children[3].children[1].children[0],
-    ast.children[3].children[1].children[1].children[0]
+    path(ast, [2, 0, 1, 0]),
+    path(ast, [3, 1, 0]),
+    path(ast, [3, 1, 1, 0])
   ]);
   t.end();
 });
