@@ -12,5 +12,18 @@ test('type selector', function (t) {
   t.equal(select(ast, 'text').length, 39);
   t.equal(select(ast, 'text')[1], ast.children[1].children[0]);
   t.equal(select(ast, 'tableRow').length, 2);
+  t.equal(select(ast, 'heading').length, 5);
+  t.end();
+});
+
+
+test('nesting', function (t) {
+  t.deepEqual(select(ast, 'root heading'), select(ast, 'heading'));
+  t.deepEqual(select(ast, 'paragraph emphasis'), [
+    ast.children[2].children[0].children[1],
+    ast.children[3].children[1],
+    ast.children[4].children[1].children[1].children[1]
+      .children[0].children[0].children[1]
+  ]);
   t.end();
 });
