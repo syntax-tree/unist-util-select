@@ -99,3 +99,10 @@ test('universal selector', function (t) {
     }, 0);
   }
 });
+
+
+test('attribute selectors', function (t) {
+  t.deepEqual(select(ast, '[depth]'), select(ast, 'heading'));
+  t.deepEqual(select(ast, '[start][ordered]'), select(ast, 'list'));
+  t.end();
+});
