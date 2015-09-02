@@ -83,3 +83,19 @@ test('grouping', function (t) {
   ]);
   t.end();
 });
+
+
+test('universal selector', function (t) {
+  t.equal(select(ast, '*').length, totalNodes(ast));
+  t.deepEqual(select(ast, '* ~ heading'), select(ast, 'heading ~ heading'));
+  t.true(select(ast, 'list > *').every(function (listItem) {
+    return listItem.type == 'listItem';
+  }));
+  t.end();
+
+  function totalNodes (ast) {
+    return 1 + (ast.children || []).map(totalNodes).reduce(function (a, b) {
+      return a + b;
+    }, 0);
+  }
+});

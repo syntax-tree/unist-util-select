@@ -28,8 +28,8 @@ select(ast, 'paragraph emphasis > text')
 - [x] Sibling selectors: `paragraph ~ text`
 - [x] Adjacent sibling selectors: `paragraph + text`
 - [x] Group selectors: `paragraph, text`
+- [x] Universal selector: `*`
 - [ ] Attribute selectors: `text[value*="substr"]`
-- [ ] Universal selectors: `*`
 
 ## API
 
