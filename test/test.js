@@ -71,3 +71,15 @@ test('siblings', function (t) {
   ]);
   t.end();
 });
+
+
+test('grouping', function (t) {
+  t.deepEqual(select(ast, 'list, heading + heading'), [
+    path(ast, [4]),
+    path(ast, [4, 1, 1]),
+    path(ast, [4, 1, 1, 0, 1]),
+    path(ast, [6]),
+    path(ast, [1])
+  ]);
+  t.end();
+});
