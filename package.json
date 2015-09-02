@@ -16,7 +16,10 @@
     "url": "https://github.com/eush77/unist-util-select/issues"
   },
   "keywords": [
-    "css",
+    "child",
+    "descendant",
+    "sibling",
+    "type",
     "expression",
     "mdast",
     "node",
