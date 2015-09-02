@@ -62,7 +62,7 @@ That's it!
 
 ## API
 
-#### `unistUtilSelect(ast, selector)`
+#### `select(ast, selector)`
 
 Applies `selector` to `ast`, returns array of matching nodes.
 
