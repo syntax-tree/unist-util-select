@@ -13,12 +13,36 @@ Select unist nodes using css-like selectors.
 
 ## Example
 
+`example.md`:
+
+```
+Get all TODO items from this list:
+
+1. Step 1.
+2. TODO Step 2.
+3. Step 3.
+  1. TODO Step 3.1.
+  2. Step 3.2.
+  3. TODO Step 3.3.
+```
+
+[`mdast`][mdast] takes this Markdown as an input and returns unist syntax tree. After that, we use `unist-util-select` to extract the required parts:
+
 ```js
 var select = require('unist-util-select');
 
-select(ast, 'paragraph emphasis > text')
-//=> array of nodes
+var markdown = fs.readFileSync('example.md', 'utf8');
+var ast = mdast.parse(markdown);
+
+select(ast, 'list text[value*=TODO]')
+//=> [ { type: 'text', value: 'TODO Step 2.' },
+//     { type: 'text', value: 'TODO Step 3.1.' },
+//     { type: 'text', value: 'TODO Step 3.3.' } ]
 ```
+
+That's it!
+
+[mdast]: https://github.com/wooorm/mdast
 
 ## Features
 
