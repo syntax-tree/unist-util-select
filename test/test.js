@@ -117,5 +117,11 @@ test('attribute selectors', function (t) {
   t.deepEqual(select(ast, '[ordered=true]'), [ast.children[6]]);
   t.deepEqual(select(ast, 'list[loose=false]'), select(ast, 'list'));
 
+  t.comment('string operators');
+  t.deepEqual(select(ast, '[link^="http://"]'), select(ast, 'definition'));
+  t.deepEqual(select(ast, '[value*=reduce]'),
+              select(ast, 'root > code[lang=js]'));
+  t.deepEqual(select(ast, '[type$=Cell]'), select(ast, 'tableCell'));
+
   t.end();
 });
