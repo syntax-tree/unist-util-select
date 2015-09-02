@@ -102,7 +102,20 @@ test('universal selector', function (t) {
 
 
 test('attribute selectors', function (t) {
+  t.comment('existence');
   t.deepEqual(select(ast, '[depth]'), select(ast, 'heading'));
   t.deepEqual(select(ast, '[start][ordered]'), select(ast, 'list'));
+
+  t.comment('equality');
+  t.deepEqual(select(ast, 'heading[depth=1], [depth=3]'), [
+    path(ast, [0]),
+    path(ast, [7])
+  ]);
+  t.deepEqual(select(ast, 'paragraph [type="text"]'),
+              select(ast, 'paragraph text'));
+  t.deepEqual(select(ast, '[start=null]'), select(ast, 'list').slice(0, 3));
+  t.deepEqual(select(ast, '[ordered=true]'), [ast.children[6]]);
+  t.deepEqual(select(ast, 'list[loose=false]'), select(ast, 'list'));
+
   t.end();
 });

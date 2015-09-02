@@ -31,7 +31,7 @@ select(ast, 'paragraph emphasis > text')
 - [x] Universal selector: `*`
 - [ ] Attribute selectors: `text[value*="substr"]`
   - [x] Existence: `[value]`
-  - [ ] Equality: `[value="foo"]`
+  - [x] Equality: `[value="foo"]`
   - [ ] Begins with: `[value^="prefix"]`
   - [ ] Containment: `[value*="substr"]`
   - [ ] Ends with: `[value$="suffix"]`
