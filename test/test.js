@@ -48,3 +48,18 @@ test('nesting', function (t) {
   ]);
   t.end();
 });
+
+
+test('siblings', function (t) {
+  t.deepEqual(select(ast, 'root ~ heading'), []);
+  t.deepEqual(select(ast, 'heading ~ heading'), [
+    path(ast, [1]),
+    path(ast, [7]),
+    path(ast, [12]),
+    path(ast, [16])
+  ]);
+  t.deepEqual(select(ast, 'heading + heading'), [
+    path(ast, [1])
+  ]);
+  t.end();
+});
