@@ -21,6 +21,14 @@ test('type selector', function (t) {
   t.equal(select(ast, 'text')[1], ast.children[1].children[0]);
   t.equal(select(ast, 'tableRow').length, 2);
   t.equal(select(ast, 'heading').length, 5);
+
+  t.deepEqual(select(ast, 'list'), [
+    path(ast, [4]),
+    path(ast, [4, 1, 1]),
+    path(ast, [4, 1, 1, 0, 1]),
+    path(ast, [6])
+  ]);
+
   t.end();
 });
 
