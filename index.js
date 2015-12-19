@@ -1,6 +1,6 @@
 'use strict';
 
-var parseSelector = require('./lib/selector')(),
+var parseSelector = require('./lib/selector'),
     select = require('./lib/select');
 
 var debug = require('debug')('unist-util-select');
