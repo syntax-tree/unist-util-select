@@ -16,7 +16,7 @@ test('edge cases', function (t) {
 
 test('type selector', function (t) {
   t.equal(select(ast, 'root').length, 1);
-  t.equal(select(ast, 'root')[0], ast);
+  t.deepEqual(select(ast, 'root'), [ast]);
   t.equal(select(ast, 'text').length, 39);
   t.equal(select(ast, 'text')[1], ast.children[1].children[0]);
   t.equal(select(ast, 'tableRow').length, 2);
@@ -122,6 +122,23 @@ test('attribute selectors', function (t) {
   t.deepEqual(select(ast, '[value*=reduce]'),
               select(ast, 'root > code[lang=js]'));
   t.deepEqual(select(ast, '[type$=Cell]'), select(ast, 'tableCell'));
+
+  t.end();
+});
+
+
+test('structural pseudo-classes', function (t) {
+  t.test(':root', function (t) {
+    t.deepEqual(select(ast, ':root'), [ast]);
+    t.deepEqual(select(ast, ':root:root'), [ast]);
+    t.deepEqual(select(ast, '* :root'), []);
+    t.deepEqual(select(ast, 'text:not(:root)'), select(ast, 'text'));
+    t.deepEqual(select(ast, ':root > list'), [
+      path(ast, [4]),
+      path(ast, [6])
+    ]);
+    t.end();
+  });
 
   t.end();
 });
