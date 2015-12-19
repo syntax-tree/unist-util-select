@@ -125,3 +125,21 @@ test('attribute selectors', function (t) {
 
   t.end();
 });
+
+
+test('negation pseudo-class', function (t) {
+  t.deepEqual(select(ast, 'list:not([nonexistent])'), select(ast, 'list'));
+  t.deepEqual(select(ast, 'list:not([start=null])'),
+              select(ast, 'list[start=1]'));
+  t.deepEqual(select(ast, 'heading text:not([value*=" "])')
+              .map(function (node) { return node.value }),
+              ['Vitae', 'References', 'License']);
+  t.deepEqual(select(ast, [
+    'list:not([ordered=true])',
+    '*:not(listItem):not(paragraph)[children]:not(list)'
+  ].join(' ')), [
+    path(ast, [4, 1, 1, 1, 0, 0]),
+    path(ast, [4, 1, 1, 1, 0, 0, 1])
+  ]);
+  t.end();
+});

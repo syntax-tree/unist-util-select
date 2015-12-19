@@ -59,6 +59,7 @@ That's it!
   - [x] Begins with: `[value^="prefix"]`
   - [x] Containment: `[value*="substr"]`
   - [x] Ends with: `[value$="suffix"]`
+- [x] Negation pseudo-class: `*:not(paragraph)`
 
 ## API
 
