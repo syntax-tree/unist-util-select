@@ -175,6 +175,15 @@ test('structural pseudo-classes', function (t) {
     t.end();
   });
 
+  t.test(':only-child', function (t) {
+    t.deepEqual(select(ast, ':root:only-child'), []);
+    t.deepEqual(select(ast, 'table:only-child'), []);
+    t.deepEqual(select(ast, ':root > *:not(paragraph) > text:only-child')
+                .map(function (node) { return node.value }),
+                ['Risus pretium quam!', 'Vitae', 'References', 'License']);
+    t.end();
+  });
+
   t.end();
 });
 

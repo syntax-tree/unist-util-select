@@ -69,7 +69,7 @@ That's it!
   - [x] `:last-child`
   - [ ] `:first-of-type`
   - [ ] `:last-of-type`
-  - [ ] `:only-child`
+  - [x] `:only-child`
   - [ ] `:only-of-type`
   - [ ] `:empty`
 - [x] Negation pseudo-class: `*:not(paragraph)`
