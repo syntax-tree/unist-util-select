@@ -154,6 +154,18 @@ test('structural pseudo-classes', function (t) {
     t.end();
   });
 
+  t.test(':first-child', function (t) {
+    t.deepEqual(select(ast, ':root:first-child'), [ast]);
+    t.deepEqual(select(ast, 'heading:first-child'), [path(ast, [0])]);
+    t.deepEqual(select(ast, 'list listItem:first-child [value]:first-child'), [
+      path(ast, [4, 0, 0, 0]),
+      path(ast, [4, 1, 1, 0, 0, 0]),
+      path(ast, [4, 1, 1, 0, 1, 0, 0, 0]),
+      path(ast, [6, 0, 0, 0])
+    ]);
+    t.end();
+  });
+
   t.end();
 });
 

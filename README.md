@@ -65,7 +65,7 @@ That's it!
   - [ ] `:nth-last-child(2n+1)`
   - [ ] `:nth-of-type(2n+1)`
   - [ ] `:nth-last-of-type(2n+1)`
-  - [ ] `:first-child`
+  - [x] `:first-child`
   - [ ] `:last-child`
   - [ ] `:first-of-type`
   - [ ] `:last-of-type`
