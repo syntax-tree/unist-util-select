@@ -62,7 +62,7 @@ That's it!
 - [ ] Structural pseudo-classes: `paragraph:first-of-type`
   - [x] `:root`
   - [x] `:nth-child(2n+1)`
-  - [ ] `:nth-last-child(2n+1)`
+  - [x] `:nth-last-child(2n+1)`
   - [ ] `:nth-of-type(2n+1)`
   - [ ] `:nth-last-of-type(2n+1)`
   - [x] `:first-child`

@@ -155,6 +155,22 @@ test('structural pseudo-classes', function (t) {
     t.end();
   });
 
+  t.test(':nth-last-child', function (t) {
+    t.deepEqual(select(ast, ':root:nth-last-child(n)'), []);
+    t.deepEqual(select(ast, 'tableCell:nth-last-child(-n+2)'), [
+      path(ast, [10, 0, 1]),
+      path(ast, [10, 0, 2]),
+      path(ast, [10, 1, 1]),
+      path(ast, [10, 1, 2]),
+      path(ast, [10, 2, 1]),
+      path(ast, [10, 2, 2])
+    ]);
+    t.deepEqual(select(ast, 'definition:nth-last-child(odd)')
+                .map(function (node) { return node.identifier }),
+                ['viverra', 'interdum']);
+    t.end();
+  });
+
   t.test(':first-child', function (t) {
     t.deepEqual(select(ast, ':root:first-child'), []);
     t.deepEqual(select(ast, 'heading:first-child'), [path(ast, [0])]);
