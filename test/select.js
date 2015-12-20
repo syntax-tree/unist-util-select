@@ -140,8 +140,9 @@ test('structural pseudo-classes', function (t) {
   });
 
   t.test(':nth-child', function (t) {
+    // 6.6.5.2 explicitly states that matching element must have a parent.
     t.deepEqual(select(ast, ':root:nth-child(0)'), []);
-    t.deepEqual(select(ast, ':root:nth-child(n)'), [ast]);
+    t.deepEqual(select(ast, ':root:nth-child(n)'), []);
     t.deepEqual(select(ast, 'root > list:nth-child(2n+5)'),
                 select(ast, 'root > list'));
     t.deepEqual(select(ast, 'heading:nth-child(even)'), [
@@ -155,7 +156,7 @@ test('structural pseudo-classes', function (t) {
   });
 
   t.test(':first-child', function (t) {
-    t.deepEqual(select(ast, ':root:first-child'), [ast]);
+    t.deepEqual(select(ast, ':root:first-child'), []);
     t.deepEqual(select(ast, 'heading:first-child'), [path(ast, [0])]);
     t.deepEqual(select(ast, 'list listItem:first-child [value]:first-child'), [
       path(ast, [4, 0, 0, 0]),
@@ -167,7 +168,7 @@ test('structural pseudo-classes', function (t) {
   });
 
   t.test(':last-child', function (t) {
-    t.deepEqual(select(ast, ':root:last-child'), [ast]);
+    t.deepEqual(select(ast, ':root:last-child'), []);
     t.deepEqual(select(ast, 'tableCell:last-child *')
                 .map(function (node) { return node.value }),
                 ['mi', 'dolor', '15000']);
