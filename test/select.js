@@ -166,6 +166,14 @@ test('structural pseudo-classes', function (t) {
     t.end();
   });
 
+  t.test(':last-child', function (t) {
+    t.deepEqual(select(ast, ':root:last-child'), [ast]);
+    t.deepEqual(select(ast, 'tableCell:last-child *')
+                .map(function (node) { return node.value }),
+                ['mi', 'dolor', '15000']);
+    t.end();
+  });
+
   t.end();
 });
 
