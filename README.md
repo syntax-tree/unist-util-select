@@ -61,7 +61,7 @@ That's it!
   - [x] Ends with: `[value$="suffix"]`
 - [ ] Structural pseudo-classes: `paragraph:first-of-type`
   - [x] `:root`
-  - [ ] `:nth-child(2n+1)`
+  - [x] `:nth-child(2n+1)`
   - [ ] `:nth-last-child(2n+1)`
   - [ ] `:nth-of-type(2n+1)`
   - [ ] `:nth-last-of-type(2n+1)`

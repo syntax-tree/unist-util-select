@@ -139,6 +139,21 @@ test('structural pseudo-classes', function (t) {
     t.end();
   });
 
+  t.test(':nth-child', function (t) {
+    t.deepEqual(select(ast, ':root:nth-child(0)'), []);
+    t.deepEqual(select(ast, ':root:nth-child(n)'), [ast]);
+    t.deepEqual(select(ast, 'root > list:nth-child(2n+5)'),
+                select(ast, 'root > list'));
+    t.deepEqual(select(ast, 'heading:nth-child(even)'), [
+      path(ast, [1]),
+      path(ast, [7])
+    ]);
+    t.deepEqual(select(ast, ':nth-child(3n+2)[type=inlineCode]')
+                .map(function (node) { return node.value }),
+                ['integer', 'proin', 'tan']);
+    t.end();
+  });
+
   t.end();
 });
 
