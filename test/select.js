@@ -205,6 +205,14 @@ test('structural pseudo-classes', function (t) {
     t.end();
   });
 
+  t.test(':empty', function (t) {
+    t.deepEqual(select(ast, ':root:empty'), []);
+    t.deepEqual(select(ast, 'text:empty'), []);
+    t.deepEqual(select(ast, 'list:not(:empty)'), select(ast, 'list'));
+    t.deepEqual(select(ast, ':empty'), select(ast, 'div > div'));
+    t.end();
+  });
+
   t.end();
 });
 

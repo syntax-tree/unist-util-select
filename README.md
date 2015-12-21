@@ -71,7 +71,7 @@ That's it!
   - [ ] `:last-of-type`
   - [x] `:only-child`
   - [ ] `:only-of-type`
-  - [ ] `:empty`
+  - [x] `:empty`
 - [x] Negation pseudo-class: `*:not(paragraph)`
 
 ## API
