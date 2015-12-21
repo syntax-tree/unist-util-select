@@ -165,9 +165,14 @@ test('structural pseudo-classes', function (t) {
       path(ast, [10, 2, 1]),
       path(ast, [10, 2, 2])
     ]);
-    t.deepEqual(select(ast, 'definition:nth-last-child(odd)')
+    t.deepEqual(select(ast, 'definition:nth-last-child(even)')
                 .map(function (node) { return node.identifier }),
                 ['viverra', 'interdum']);
+    t.deepEqual(select(ast,
+                       ':root > :nth-last-child(n+2):nth-last-child(-n+3)'), [
+                         path(ast, [16]),
+                         path(ast, [17])
+                       ]);
     t.end();
   });
 

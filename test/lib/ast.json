@@ -497,6 +497,15 @@
           "value": "MIT"
         }
       ]
+    },
+    {
+      "type": "div",
+      "children": [
+        {
+          "type": "div",
+          "children": []
+        }
+      ]
     }
   ]
 }
