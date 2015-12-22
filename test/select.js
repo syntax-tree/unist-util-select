@@ -177,6 +177,7 @@ test('structural pseudo-classes', function (t) {
   });
 
   t.test(':first-child', function (t) {
+    t.deepEqual(select(ast, ':first-child'), select(ast, ':nth-child(1)'));
     t.deepEqual(select(ast, ':root:first-child'), []);
     t.deepEqual(select(ast, 'heading:first-child'), [path(ast, [0])]);
     t.deepEqual(select(ast, 'list listItem:first-child [value]:first-child'), [
@@ -189,6 +190,7 @@ test('structural pseudo-classes', function (t) {
   });
 
   t.test(':last-child', function (t) {
+    t.deepEqual(select(ast, ':last-child'), select(ast, ':nth-last-child(1)'));
     t.deepEqual(select(ast, ':root:last-child'), []);
     t.deepEqual(select(ast, 'tableCell:last-child *')
                 .map(function (node) { return node.value }),
@@ -197,6 +199,8 @@ test('structural pseudo-classes', function (t) {
   });
 
   t.test(':only-child', function (t) {
+    t.deepEqual(select(ast, ':only-child'),
+                select(ast, ':first-child:last-child'));
     t.deepEqual(select(ast, ':root:only-child'), []);
     t.deepEqual(select(ast, 'table:only-child'), []);
     t.deepEqual(select(ast, ':root > *:not(paragraph) > text:only-child')
