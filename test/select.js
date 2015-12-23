@@ -208,6 +208,31 @@ test('structural pseudo-classes', function (t) {
     t.end();
   });
 
+  t.test(':nth-last-of-type', function (t) {
+    t.deepEqual(select(ast, ':root > :nth-last-of-type(n+3)'), [
+      path(ast, [0]),
+      path(ast, [1]),
+      path(ast, [3]),
+      path(ast, [5]),
+      path(ast, [7]),
+      path(ast, [8]),
+      path(ast, [13])
+    ]);
+    t.deepEqual(select(ast, ':root > :nth-last-of-type(even)'), [
+      path(ast, [1]),
+      path(ast, [4]),
+      path(ast, [5]),
+      path(ast, [11]),
+      path(ast, [12]),
+      path(ast, [14])
+    ]);
+    t.deepEqual(select(ast, 'list + :nth-last-of-type(n+3)'), [
+      path(ast, [5]),
+      path(ast, [7])
+    ]);
+    t.end();
+  });
+
   t.test(':first-child', function (t) {
     t.deepEqual(select(ast, ':first-child'), select(ast, ':nth-child(1)'));
     t.deepEqual(select(ast, ':root:first-child'), []);
@@ -251,6 +276,29 @@ test('structural pseudo-classes', function (t) {
     t.end();
   });
 
+  t.test(':last-of-type', function (t) {
+    t.deepEqual(select(ast, ':last-of-type'),
+                select(ast, ':nth-last-of-type(1)'));
+    t.deepEqual(select(ast, ':root:last-of-type'), []);
+    t.deepEqual(select(ast, ':root > :last-of-type'), [
+      path(ast, [2]),
+      path(ast, [6]),
+      path(ast, [9]),
+      path(ast, [10]),
+      path(ast, [15]),
+      path(ast, [16]),
+      path(ast, [17]),
+      path(ast, [18])
+    ]);
+    t.deepEqual(select(ast, 'table ~ :last-of-type'), [
+      path(ast, [15]),
+      path(ast, [16]),
+      path(ast, [17]),
+      path(ast, [18])
+    ]);
+    t.end();
+  });
+
   t.test(':only-child', function (t) {
     t.deepEqual(select(ast, ':only-child'),
                 select(ast, ':first-child:last-child'));
@@ -259,6 +307,18 @@ test('structural pseudo-classes', function (t) {
     t.deepEqual(select(ast, ':root > *:not(paragraph) > text:only-child')
                 .map(function (node) { return node.value }),
                 ['Risus pretium quam!', 'Vitae', 'References', 'License']);
+    t.end();
+  });
+
+  t.test(':only-of-type', function (t) {
+    t.deepEqual(select(ast, ':only-of-type'),
+                select(ast, ':first-of-type:last-of-type'));
+    t.deepEqual(select(ast, ':root > :only-of-type'), [
+      path(ast, [2]),
+      path(ast, [9]),
+      path(ast, [10]),
+      path(ast, [18])
+    ]);
     t.end();
   });
 
