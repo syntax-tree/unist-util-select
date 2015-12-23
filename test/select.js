@@ -176,6 +176,38 @@ test('structural pseudo-classes', function (t) {
     t.end();
   });
 
+  t.test(':nth-of-type', function (t) {
+    t.deepEqual(select(ast, ':root > :nth-of-type(-2n+4)'), [
+      path(ast, [1]),
+      path(ast, [5]),
+      path(ast, [6]),
+      path(ast, [11]),
+      path(ast, [12]),
+      path(ast, [14])
+    ]);
+    t.deepEqual(select(ast, ':root > :nth-of-type(odd)'), [
+      path(ast, [0]),
+      path(ast, [2]),
+      path(ast, [3]),
+      path(ast, [4]),
+      path(ast, [7]),
+      path(ast, [8]),
+      path(ast, [9]),
+      path(ast, [10]),
+      path(ast, [13]),
+      path(ast, [15]),
+      path(ast, [16]),
+      path(ast, [17]),
+      path(ast, [18])
+    ]);
+    t.deepEqual(select(ast, 'list ~ :nth-of-type(2)'), [
+      path(ast, [5]),
+      path(ast, [6]),
+      path(ast, [14])
+    ]);
+    t.end();
+  });
+
   t.test(':first-child', function (t) {
     t.deepEqual(select(ast, ':first-child'), select(ast, ':nth-child(1)'));
     t.deepEqual(select(ast, ':root:first-child'), []);
@@ -195,6 +227,27 @@ test('structural pseudo-classes', function (t) {
     t.deepEqual(select(ast, 'tableCell:last-child *')
                 .map(function (node) { return node.value }),
                 ['mi', 'dolor', '15000']);
+    t.end();
+  });
+
+  t.test(':first-of-type', function (t) {
+    t.deepEqual(select(ast, ':first-of-type'), select(ast, ':nth-of-type(1)'));
+    t.deepEqual(select(ast, ':root:first-of-type'), []);
+    t.deepEqual(select(ast, ':root > :first-of-type'), [
+      path(ast, [0]),
+      path(ast, [2]),
+      path(ast, [3]),
+      path(ast, [4]),
+      path(ast, [9]),
+      path(ast, [10]),
+      path(ast, [13]),
+      path(ast, [18])
+    ]);
+    t.deepEqual(select(ast, 'code ~ :first-of-type'), [
+      path(ast, [10]),
+      path(ast, [13]),
+      path(ast, [18])
+    ]);
     t.end();
   });
 

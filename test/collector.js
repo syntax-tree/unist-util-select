@@ -5,7 +5,7 @@ var Collector = require('../lib/collector');
 var test = require('tape');
 
 
-test('collector', function (t) {
+test('Collector', function (t) {
   var collect = Collector();
   collect('foo');
   collect(['foo', 'bar', 'baz', 'bar']);

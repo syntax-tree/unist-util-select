@@ -63,11 +63,11 @@ That's it!
   - [x] `:root`
   - [x] `:nth-child(2n+1)`
   - [x] `:nth-last-child(2n+1)`
-  - [ ] `:nth-of-type(2n+1)`
+  - [x] `:nth-of-type(2n+1)`
   - [ ] `:nth-last-of-type(2n+1)`
   - [x] `:first-child`
   - [x] `:last-child`
-  - [ ] `:first-of-type`
+  - [x] `:first-of-type`
   - [ ] `:last-of-type`
   - [x] `:only-child`
   - [ ] `:only-of-type`
