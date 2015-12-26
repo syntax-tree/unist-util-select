@@ -46,6 +46,10 @@ That's it!
 
 ## Features
 
+All the relevant parts of [Selectors Level 3][spec]:
+
+[spec]: http://www.w3.org/TR/css3-selectors/
+
 - [x] Type selectors: `paragraph`
 - [x] Descendant selectors: `paragraph text`
 - [x] Child selectors: `paragraph > text`
