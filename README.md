@@ -59,18 +59,18 @@ That's it!
   - [x] Begins with: `[value^="prefix"]`
   - [x] Containment: `[value*="substr"]`
   - [x] Ends with: `[value$="suffix"]`
-- [ ] Structural pseudo-classes: `paragraph:first-of-type`
+- [x] Structural pseudo-classes: `paragraph:first-of-type`
   - [x] `:root`
   - [x] `:nth-child(2n+1)`
   - [x] `:nth-last-child(2n+1)`
   - [x] `:nth-of-type(2n+1)`
-  - [ ] `:nth-last-of-type(2n+1)`
+  - [x] `:nth-last-of-type(2n+1)`
   - [x] `:first-child`
   - [x] `:last-child`
   - [x] `:first-of-type`
-  - [ ] `:last-of-type`
+  - [x] `:last-of-type`
   - [x] `:only-child`
-  - [ ] `:only-of-type`
+  - [x] `:only-of-type`
   - [x] `:empty`
 - [x] Negation pseudo-class: `*:not(paragraph)`
 
