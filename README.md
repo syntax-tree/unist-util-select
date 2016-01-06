@@ -26,13 +26,13 @@ Get all TODO items from this list:
   3. TODO Step 3.3.
 ```
 
-[`mdast`][mdast] takes this Markdown as an input and returns unist syntax tree. After that, we use `unist-util-select` to extract the required parts:
+[remark] takes this Markdown as an input and returns unist syntax tree. After that, we use `unist-util-select` to extract the required parts:
 
 ```js
 var select = require('unist-util-select');
 
 var markdown = fs.readFileSync('example.md', 'utf8');
-var ast = mdast.parse(markdown);
+var ast = remark.parse(markdown);
 
 select(ast, 'list text[value*=TODO]')
 //=> [ { type: 'text', value: 'TODO Step 2.' },
@@ -42,7 +42,7 @@ select(ast, 'list text[value*=TODO]')
 
 That's it!
 
-[mdast]: https://github.com/wooorm/mdast
+[remark]: https://github.com/wooorm/remark
 
 ## Features
 
