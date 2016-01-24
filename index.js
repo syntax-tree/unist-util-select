@@ -7,6 +7,10 @@ var debug = require('debug')('unist-util-select');
 
 
 var select = function select (ast, selector) {
+  if (arguments.length == 1) {
+    return select.bind(this, ast);
+  }
+
   debug('Selector: %j', selector);
   selector = parseSelector(selector);
   debug('AST: %s',
@@ -16,6 +20,10 @@ var select = function select (ast, selector) {
 
 
 select.one = function selectOne (ast, selector) {
+  if (arguments.length == 1) {
+    return selectOne.bind(this, ast);
+  }
+
   var nodes = select(ast, selector);
 
   if (!nodes.length) {

@@ -2,8 +2,7 @@
 
 var select = require('..'),
     select1 = select.one,
-    ast = require('./lib/ast')(),
-    path = require('./lib/path');
+    ast = require('./lib/ast')();
 
 var test = require('tape');
 

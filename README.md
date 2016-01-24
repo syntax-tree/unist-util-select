@@ -82,11 +82,15 @@ All the relevant parts of [Selectors Level 3][spec]:
 
 ## API
 
-#### `select(ast, selector)`
+### `select(ast, selector)`
+
+*Curried form: `select(ast)(selector)`*
 
 Applies `selector` to `ast`, returns array of matching nodes.
 
-#### `select.one(ast, selector)`
+### `select.one(ast, selector)`
+
+*Curried form: `select.one(ast)(selector)`*
 
 Returns a single node matching `selector`.
 
