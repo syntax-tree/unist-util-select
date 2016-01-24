@@ -45,6 +45,7 @@
     "nth-check": "^1.0.1"
   },
   "devDependencies": {
-    "tape": "^4.2.0"
+    "tape": "^4.2.0",
+    "unist-builder": "^1.0.1"
   }
 }

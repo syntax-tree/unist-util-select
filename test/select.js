@@ -1,7 +1,7 @@
 'use strict';
 
 var select = require('..'),
-    ast = require('./lib/ast'),
+    ast = require('./lib/ast')(),
     path = require('./lib/path');
 
 var test = require('tape');
