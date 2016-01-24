@@ -4,7 +4,9 @@
 
 [![Build Status][travis-badge]][travis] [![Dependency Status][david-badge]][david]
 
-Select unist nodes using css-like selectors.
+Select [Unist] nodes with CSS-like selectors.
+
+[unist]: https://github.com/wooorm/unist
 
 [travis]: https://travis-ci.org/eush77/unist-util-select
 [travis-badge]: https://travis-ci.org/eush77/unist-util-select.svg?branch=master
@@ -83,6 +85,12 @@ All the relevant parts of [Selectors Level 3][spec]:
 #### `select(ast, selector)`
 
 Applies `selector` to `ast`, returns array of matching nodes.
+
+#### `select.one(ast, selector)`
+
+Returns a single node matching `selector`.
+
+Throws an error if node is not found or not unique.
 
 ## Install
 
