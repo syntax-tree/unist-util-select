@@ -4,7 +4,7 @@
 
 [![Build Status][travis-badge]][travis] [![Dependency Status][david-badge]][david]
 
-Select [Unist] nodes with CSS-like selectors.
+Select [Unist][] nodes with CSS-like selectors.
 
 [unist]: https://github.com/wooorm/unist
 
@@ -28,7 +28,7 @@ Get all TODO items from this list:
   3. TODO Step 3.3.
 ```
 
-[remark] takes this Markdown as an input and returns unist syntax tree. After that, we use `unist-util-select` to extract the required parts:
+[remark][] takes this Markdown as an input and returns unist syntax tree. After that, we use `unist-util-select` to extract the required parts:
 
 ```js
 var select = require('unist-util-select');
@@ -52,33 +52,33 @@ All the relevant parts of [Selectors Level 3][spec]:
 
 [spec]: http://www.w3.org/TR/css3-selectors/
 
-- [x] Type selectors: `paragraph`
-- [x] Descendant selectors: `paragraph text`
-- [x] Child selectors: `paragraph > text`
-- [x] Sibling selectors: `paragraph ~ text`
-- [x] Adjacent sibling selectors: `paragraph + text`
-- [x] Group selectors: `paragraph, text`
-- [x] Universal selector: `*`
-- [x] Attribute selectors: `text[value*="substr"]`
-  - [x] Existence: `[value]`
-  - [x] Equality: `[value="foo"]`
-  - [x] Begins with: `[value^="prefix"]`
-  - [x] Containment: `[value*="substr"]`
-  - [x] Ends with: `[value$="suffix"]`
-- [x] Structural pseudo-classes: `paragraph:first-of-type`
-  - [x] `:root`
-  - [x] `:nth-child(2n+1)`
-  - [x] `:nth-last-child(2n+1)`
-  - [x] `:nth-of-type(2n+1)`
-  - [x] `:nth-last-of-type(2n+1)`
-  - [x] `:first-child`
-  - [x] `:last-child`
-  - [x] `:first-of-type`
-  - [x] `:last-of-type`
-  - [x] `:only-child`
-  - [x] `:only-of-type`
-  - [x] `:empty`
-- [x] Negation pseudo-class: `*:not(paragraph)`
+-   [x] Type selectors: `paragraph`
+-   [x] Descendant selectors: `paragraph text`
+-   [x] Child selectors: `paragraph > text`
+-   [x] Sibling selectors: `paragraph ~ text`
+-   [x] Adjacent sibling selectors: `paragraph + text`
+-   [x] Group selectors: `paragraph, text`
+-   [x] Universal selector: `*`
+-   [x] Attribute selectors: `text[value*="substr"]`
+    -   [x] Existence: `[value]`
+    -   [x] Equality: `[value="foo"]`
+    -   [x] Begins with: `[value^="prefix"]`
+    -   [x] Containment: `[value*="substr"]`
+    -   [x] Ends with: `[value$="suffix"]`
+-   [x] Structural pseudo-classes: `paragraph:first-of-type`
+    -   [x] `:root`
+    -   [x] `:nth-child(2n+1)`
+    -   [x] `:nth-last-child(2n+1)`
+    -   [x] `:nth-of-type(2n+1)`
+    -   [x] `:nth-last-of-type(2n+1)`
+    -   [x] `:first-child`
+    -   [x] `:last-child`
+    -   [x] `:first-of-type`
+    -   [x] `:last-of-type`
+    -   [x] `:only-child`
+    -   [x] `:only-of-type`
+    -   [x] `:empty`
+-   [x] Negation pseudo-class: `*:not(paragraph)`
 
 ## API
 
