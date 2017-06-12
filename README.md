@@ -20,12 +20,13 @@ Select [Unist][] nodes with CSS-like selectors.
 ```
 Get all TODO items from this list:
 
-1. Step 1.
-2. TODO Step 2.
-3. Step 3.
-  1. TODO Step 3.1.
-  2. Step 3.2.
-  3. TODO Step 3.3.
+1.  Step 1.
+2.  TODO Step 2.
+3.  Step 3.
+
+    1. TODO Step 3.1.
+    2. Step 3.2.
+    3. TODO Step 3.3.
 ```
 
 [remark][] takes this Markdown as an input and returns unist syntax tree. After that, we use `unist-util-select` to extract the required parts:
@@ -33,7 +34,7 @@ Get all TODO items from this list:
 ```js
 var select = require('unist-util-select');
 
-var markdown = fs.readFileSync('example.md', 'utf8');
+var markdown = fs.readFileSync('example.md');
 var ast = remark.parse(markdown);
 
 select(ast, 'list text[value*=TODO]')
