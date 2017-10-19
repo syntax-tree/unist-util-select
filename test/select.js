@@ -350,3 +350,12 @@ test('negation pseudo-class', function (t) {
   ]);
   t.end();
 });
+
+test(':has(selector)', function (t) {
+  t.deepEqual(select(ast, 'list:has(listItem)'), select(ast, 'list'));
+  t.deepEqual(select(ast, 'paragraph:has(linkReference)'),
+              select(ast, 'paragraph').filter(function(para) {
+                return select(para, 'linkReference').length > 0;
+              }));
+  t.end();
+});
