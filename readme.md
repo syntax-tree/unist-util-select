@@ -26,7 +26,7 @@ Returns `boolean`, whether the node matches or not.
 
 This only checks the element itself, not the surrounding tree.
 Thus, nesting in selectors is not supported (`paragraph strong`,
-`paragraph > strong`), not are selectors like `:first-child`, etc.
+`paragraph > strong`), nor are selectors like `:first-child`, etc.
 This simply checks that the given element matches the selector.
 
 ```javascript
@@ -120,23 +120,19 @@ Yields:
 *   [x] `[attr^=value]` (attribute begins with, only works on strings)
 *   [x] `[attr$=value]` (attribute ends with, only works on strings)
 *   [x] `[attr*=value]` (attribute contains, only works on strings)
-*   [x] `[attr~=value]` (checks if `value` is in the array, if there’s an array
-    on the tree, otherwise same as attribute equality)
+*   [x] `[attr~=value]` (attribute contains, checks if `value` is in the array,
+    if there’s an array on the tree, otherwise same as attribute equality)
 *   [x] `:any()` (functional pseudo-class, use `:matches` instead)
-*   [x] `:has()` (functional pseudo-class).
-    <small>Relative selectors (`:has(> img)`) are not supported, but `:scope` is
+*   [x] `:has()` (functional pseudo-class)
+    Relative selectors (`:has(> img)`) are not supported, but `:scope` is
 *   [x] `:matches()` (functional pseudo-class)
 *   [x] `:not()` (functional pseudo-class)
-*   [x] `:blank` (pseudo-class)
-    <small>blank and empty are the same: a parent without children, or a node
-    without value</small>
-*   [x] `:empty` (pseudo-class)
-    <small>blank and empty are the same: a parent without children, or a node
-    without value</small>
-*   [x] `:root` (pseudo-class)
-    <small>Matches the given node</small>
-*   [x] `:scope` (pseudo-class):
-    <small>Matches the given node</small>
+*   [x] `:blank` (pseudo-class, blank and empty are the same: a parent without
+    children, or a node without value)
+*   [x] `:empty` (pseudo-class, blank and empty are the same: a parent without
+    children, or a node without value)
+*   [x] `:root` (pseudo-class, matches the given node)
+*   [x] `:scope` (pseudo-class, matches the given node)
 *   [x] \* `:first-child` (pseudo-class)
 *   [x] \* `:first-of-type` (pseudo-class)
 *   [x] \* `:last-child` (pseudo-class)
