@@ -1,4 +1,5 @@
 language: node_js
 node_js:
-  - 4
-  - 8
+- lts/boron
+- node
+after_script: bash <(curl -s https://codecov.io/bash)
