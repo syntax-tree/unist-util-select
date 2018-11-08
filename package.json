@@ -1,6 +1,6 @@
 {
   "name": "unist-util-select",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "description": "Select unist nodes using css-like selectors",
   "license": "MIT",
   "keywords": [
