@@ -40,7 +40,10 @@
   "dependencies": {
     "css-selector-parser": "^1.1.0",
     "debug": "^3.1.0",
-    "nth-check": "^1.0.1"
+    "not": "^0.1.0",
+    "nth-check": "^1.0.1",
+    "unist-util-is": "^2.1.2",
+    "zwitch": "^1.0.3"
   },
   "devDependencies": {
     "nyc": "^13.1.0",
@@ -48,7 +51,7 @@
     "remark-cli": "^6.0.0",
     "remark-preset-wooorm": "^4.0.0",
     "tape": "^4.2.0",
-    "unist-builder": "^1.0.1",
+    "unist-builder": "^1.0.3",
     "xo": "^0.23.0"
   },
   "scripts": {
@@ -73,7 +76,10 @@
   },
   "xo": {
     "prettier": true,
-    "esnext": false
+    "esnext": false,
+    "rules": {
+      "max-params": "off"
+    }
   },
   "remarkConfig": {
     "plugins": [

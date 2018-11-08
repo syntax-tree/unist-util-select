@@ -2,8 +2,7 @@
 
 /* eslint-disable import/no-unassigned-import */
 
-require('./collector')
-require('./curried')
-require('./select-one')
+require('./matches')
 require('./select')
-require('./type-index')
+require('./select-all')
+require('./all')
