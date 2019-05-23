@@ -154,6 +154,25 @@ Yields:
 
 *   \* — Not supported in `matches`
 
+## Related
+
+*   [`unist-util-filter`](https://github.com/syntax-tree/unist-util-filter)
+    — Create a new tree with all nodes that pass the given function
+*   [`unist-util-flatmap`](https://gitlab.com/staltz/unist-util-flatmap)
+    — Create a new tree by expanding a node into many
+*   [`unist-util-is`](https://github.com/syntax-tree/unist-util-is)
+    — Check if a node passes a test
+*   [`unist-util-map`](https://github.com/syntax-tree/unist-util-map)
+    — Create a new tree by mapping nodes
+*   [`unist-util-remove`](https://github.com/syntax-tree/unist-util-remove)
+    — Remove nodes from trees
+*   [`unist-util-remove-position`](https://github.com/syntax-tree/unist-util-remove-position)
+    — Remove positional info from trees
+*   [`unist-util-visit`](https://github.com/syntax-tree/unist-util-visit)
+    — Recursively walk over nodes
+*   [`unist-builder`](https://github.com/syntax-tree/unist-builder)
+    — Helper for creating trees
+
 ## Contribute
 
 See [`contributing.md` in `syntax-tree/.github`][contributing] for ways to get
