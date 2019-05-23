@@ -8,8 +8,8 @@
 [![Backers][backers-badge]][collective]
 [![Chat][chat-badge]][chat]
 
-Selector support for [unist][].
-`querySelector`, `querySelectorAll`, and `matches`.
+[**unist**][unist] utility with equivalents `querySelector`, `querySelectorAll`,
+and `matches`.
 
 Note that the DOM has references to their parent nodes, meaning that
 `document.body.matches(':last-child')` can be evaluated.
@@ -17,11 +17,11 @@ This information is not stored in unist, so selectors like that don’t work.
 
 [View the list of supported selectors »][support]
 
-## Installation
+## Install
 
 [npm][]:
 
-```bash
+```sh
 npm install unist-util-select
 ```
 
@@ -35,13 +35,13 @@ Returns `boolean`, whether the node matches or not.
 This only checks the element itself, not the surrounding tree.
 Thus, nesting in selectors is not supported (`paragraph strong`,
 `paragraph > strong`), nor are selectors like `:first-child`, etc.
-This simply checks that the given element matches the selector.
+This only checks that the given element matches the selector.
 
-```javascript
+```js
 var u = require('unist-builder')
 var matches = require('unist-util-select').matches
 
-matches('strong, em', u('strong', [u('text', 'bold')])) // => true
+matches('strong, em', u('strong', [u('text', 'important')])) // => true
 matches('[lang]', u('code', {lang: 'js'}, 'console.log(1)')) // => true
 ```
 
@@ -51,7 +51,7 @@ Select the first node matching `selector` in the given `tree` (could be the
 tree itself).
 Returns the found [node][], if any.
 
-```javascript
+```js
 var u = require('unist-builder')
 var select = require('unist-util-select').select
 
@@ -71,7 +71,7 @@ console.log(
 
 Yields:
 
-```javascript
+```js
 { type: 'paragraph',
   children: [ { type: 'text', value: 'Delta' } ] }
 ```
@@ -82,7 +82,7 @@ Select all nodes matching `selector` in the given `tree` (could include the
 tree itself).
 Returns all found [node][]s, if any.
 
-```javascript
+```js
 var u = require('unist-builder')
 var selectAll = require('unist-util-select').selectAll
 
@@ -104,7 +104,7 @@ console.log(
 
 Yields:
 
-```javascript
+```js
 [ { type: 'paragraph',
     children: [ { type: 'text', value: 'Delta' } ] },
   { type: 'paragraph',
@@ -112,8 +112,6 @@ Yields:
 ```
 
 ## Support
-
-<!--lint ignore no-html-->
 
 *   [x] `*` (universal selector)
 *   [x] `,` (multiple selector)
@@ -158,11 +156,13 @@ Yields:
 
 ## Contribute
 
-See [`contributing.md` in `syntax-tree/unist`][contributing] for ways to get
+See [`contributing.md` in `syntax-tree/.github`][contributing] for ways to get
 started.
+See [`support.md`][help] for ways to get help.
 
-This organisation has a [Code of Conduct][coc].  By interacting with this
-repository, organisation, or community you agree to abide by its terms.
+This project has a [Code of Conduct][coc].
+By interacting with this repository, organisation, or community you agree to
+abide by its terms.
 
 ## License
 
@@ -200,12 +200,14 @@ repository, organisation, or community you agree to abide by its terms.
 
 [license]: license
 
+[contributing]: https://github.com/syntax-tree/.github/blob/master/contributing.md
+
+[help]: https://github.com/syntax-tree/.github/blob/master/support.md
+
+[coc]: https://github.com/syntax-tree/.github/blob/master/code-of-conduct.md
+
 [unist]: https://github.com/syntax-tree/unist
 
 [node]: https://github.com/syntax-tree/unist#node
 
 [support]: #support
-
-[contributing]: https://github.com/syntax-tree/unist/blob/master/contributing.md
-
-[coc]: https://github.com/syntax-tree/unist/blob/master/code-of-conduct.md
