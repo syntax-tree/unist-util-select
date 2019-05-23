@@ -1,4 +1,12 @@
-# unist-util-select [![Build][build-badge]][build] [![Coverage][coverage-badge]][coverage] [![Downloads][downloads-badge]][downloads] [![Chat][chat-badge]][chat]
+# unist-util-select
+
+[![Build][build-badge]][build]
+[![Coverage][coverage-badge]][coverage]
+[![Downloads][downloads-badge]][downloads]
+[![Size][size-badge]][size]
+[![Sponsors][sponsors-badge]][collective]
+[![Backers][backers-badge]][collective]
+[![Chat][chat-badge]][chat]
 
 Selector support for [unist][].
 `querySelector`, `querySelectorAll`, and `matches`.
@@ -173,6 +181,16 @@ repository, organisation, or community you agree to abide by its terms.
 [downloads-badge]: https://img.shields.io/npm/dm/unist-util-select.svg
 
 [downloads]: https://www.npmjs.com/package/unist-util-select
+
+[size-badge]: https://img.shields.io/bundlephobia/minzip/unist-util-select.svg
+
+[size]: https://bundlephobia.com/result?p=unist-util-select
+
+[sponsors-badge]: https://opencollective.com/unified/sponsors/badge.svg
+
+[backers-badge]: https://opencollective.com/unified/backers/badge.svg
+
+[collective]: https://opencollective.com/unified
 
 [chat-badge]: https://img.shields.io/badge/join%20the%20community-on%20spectrum-7b16ff.svg
 
