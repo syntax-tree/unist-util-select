@@ -45,20 +45,20 @@
   ],
   "types": "types/index.d.ts",
   "dependencies": {
-    "css-selector-parser": "^1.1.0",
+    "css-selector-parser": "^1.0.0",
     "not": "^0.1.0",
-    "nth-check": "^1.0.1",
+    "nth-check": "^1.0.0",
     "unist-util-is": "^4.0.0",
-    "zwitch": "^1.0.3"
+    "zwitch": "^1.0.0"
   },
   "devDependencies": {
-    "dtslint": "^0.9.9",
-    "nyc": "^14.0.0",
+    "dtslint": "^2.0.0",
+    "nyc": "^15.0.0",
     "prettier": "^1.0.0",
     "remark-cli": "^7.0.0",
     "remark-preset-wooorm": "^6.0.0",
     "tape": "^4.0.0",
-    "unist-builder": "^1.0.0",
+    "unist-builder": "^2.0.0",
     "xo": "^0.25.0"
   },
   "scripts": {
