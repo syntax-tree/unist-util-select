@@ -156,20 +156,23 @@ Yields:
 
 ## Related
 
-*   [`unist-util-filter`](https://github.com/syntax-tree/unist-util-filter)
-    — Create a new tree with all nodes that pass the given function
+*   [`unist-util-filter`](https://github.com/eush77/unist-util-filter)
+    — Create a new tree with all nodes that pass a test
+*   [`unist-util-map`](https://github.com/syntax-tree/unist-util-map)
+    — Create a new tree with all nodes mapped by a given function
 *   [`unist-util-flatmap`](https://gitlab.com/staltz/unist-util-flatmap)
-    — Create a new tree by expanding a node into many
+    — Create a new tree by mapping (to an array) with the provided function and
+    then flattening
 *   [`unist-util-is`](https://github.com/syntax-tree/unist-util-is)
     — Check if a node passes a test
-*   [`unist-util-map`](https://github.com/syntax-tree/unist-util-map)
-    — Create a new tree by mapping nodes
 *   [`unist-util-remove`](https://github.com/syntax-tree/unist-util-remove)
     — Remove nodes from trees
 *   [`unist-util-remove-position`](https://github.com/syntax-tree/unist-util-remove-position)
     — Remove positional info from trees
 *   [`unist-util-visit`](https://github.com/syntax-tree/unist-util-visit)
     — Recursively walk over nodes
+*   [`unist-util-visit-parents`](https://github.com/syntax-tree/unist-util-visit-parents)
+    — Like `visit`, but with a stack of parents
 *   [`unist-builder`](https://github.com/syntax-tree/unist-builder)
     — Helper for creating trees
 
@@ -211,7 +214,7 @@ abide by its terms.
 
 [collective]: https://opencollective.com/unified
 
-[chat-badge]: https://img.shields.io/badge/join%20the%20community-on%20spectrum-7b16ff.svg
+[chat-badge]: https://img.shields.io/badge/chat-spectrum-7b16ff.svg
 
 [chat]: https://spectrum.chat/unified/syntax-tree
 
