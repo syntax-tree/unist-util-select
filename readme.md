@@ -8,8 +8,8 @@
 [![Backers][backers-badge]][collective]
 [![Chat][chat-badge]][chat]
 
-[**unist**][unist] utility with equivalents `querySelector`, `querySelectorAll`,
-and `matches`.
+[**unist**][unist] utility with equivalents for `querySelector`,
+`querySelectorAll`, and `matches`.
 
 Note that the DOM has references to their parent nodes, meaning that
 `document.body.matches(':last-child')` can be evaluated.
@@ -72,8 +72,7 @@ console.log(
 Yields:
 
 ```js
-{ type: 'paragraph',
-  children: [ { type: 'text', value: 'Delta' } ] }
+{type: 'paragraph', children: [{type: 'text', value: 'Delta'}]}
 ```
 
 ### `select.selectAll(selector, tree)`
@@ -105,10 +104,10 @@ console.log(
 Yields:
 
 ```js
-[ { type: 'paragraph',
-    children: [ { type: 'text', value: 'Delta' } ] },
-  { type: 'paragraph',
-    children: [ { type: 'text', value: 'Foxtrot' } ] } ]
+[
+  {type: 'paragraph', children: [{type: 'text', value: 'Delta'}]},
+  {type: 'paragraph', children: [{type: 'text', value: 'Foxtrot'}]}
+]
 ```
 
 ## Support
@@ -182,8 +181,8 @@ See [`contributing.md` in `syntax-tree/.github`][contributing] for ways to get
 started.
 See [`support.md`][help] for ways to get help.
 
-This project has a [Code of Conduct][coc].
-By interacting with this repository, organisation, or community you agree to
+This project has a [code of conduct][coc].
+By interacting with this repository, organization, or community you agree to
 abide by its terms.
 
 ## License
