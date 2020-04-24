@@ -54,15 +54,15 @@
   "devDependencies": {
     "dtslint": "^3.0.0",
     "nyc": "^15.0.0",
-    "prettier": "^1.0.0",
-    "remark-cli": "^7.0.0",
-    "remark-preset-wooorm": "^6.0.0",
+    "prettier": "^2.0.0",
+    "remark-cli": "^8.0.0",
+    "remark-preset-wooorm": "^7.0.0",
     "tape": "^4.0.0",
     "unist-builder": "^2.0.0",
-    "xo": "^0.26.0"
+    "xo": "^0.29.0"
   },
   "scripts": {
-    "format": "remark . -qfo && prettier --write \"**/*.js\" && xo --fix",
+    "format": "remark . -qfo && prettier --write \"**/*.{js,ts}\" && xo --fix",
     "test-api": "node test",
     "test-coverage": "nyc --reporter lcov tape test/index.js",
     "test-types": "dtslint types",
@@ -85,6 +85,9 @@
   "xo": {
     "prettier": true,
     "esnext": false,
+    "ignore": [
+      "types"
+    ],
     "rules": {
       "max-params": "off",
       "unicorn/prefer-reflect-apply": "off",

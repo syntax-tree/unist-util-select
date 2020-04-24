@@ -4,10 +4,10 @@ var test = require('tape')
 var u = require('unist-builder')
 var selectAll = require('..').selectAll
 
-test('select.selectAll()', function(t) {
-  t.test('invalid selectors', function(st) {
+test('select.selectAll()', function (t) {
+  t.test('invalid selectors', function (st) {
     st.throws(
-      function() {
+      function () {
         selectAll()
       },
       /Error: Expected `string` as selector, not `undefined`/,
@@ -15,7 +15,7 @@ test('select.selectAll()', function(t) {
     )
 
     st.throws(
-      function() {
+      function () {
         selectAll([], u('a'))
       },
       /Error: Expected `string` as selector, not ``/,
@@ -23,7 +23,7 @@ test('select.selectAll()', function(t) {
     )
 
     st.throws(
-      function() {
+      function () {
         selectAll('@supports (transform-origin: 5% 5%) {}', u('a'))
       },
       /Error: Rule expected but "@" found./,
@@ -31,7 +31,7 @@ test('select.selectAll()', function(t) {
     )
 
     st.throws(
-      function() {
+      function () {
         selectAll('[foo%=bar]', u('a'))
       },
       /Error: Expected "=" but "%" found./,
@@ -39,7 +39,7 @@ test('select.selectAll()', function(t) {
     )
 
     st.throws(
-      function() {
+      function () {
         selectAll(':active', u('a'))
       },
       /Error: Unknown pseudo-selector `active`/,
@@ -47,7 +47,7 @@ test('select.selectAll()', function(t) {
     )
 
     st.throws(
-      function() {
+      function () {
         selectAll(':nth-foo(2n+1)', u('a'))
       },
       /Error: Unknown pseudo-selector `nth-foo`/,
@@ -55,7 +55,7 @@ test('select.selectAll()', function(t) {
     )
 
     st.throws(
-      function() {
+      function () {
         selectAll('::before', u('a'))
       },
       /Error: Unexpected pseudo-element or empty pseudo-class/,
@@ -65,7 +65,7 @@ test('select.selectAll()', function(t) {
     st.end()
   })
 
-  t.test('general', function(st) {
+  t.test('general', function (st) {
     st.deepEqual(
       selectAll('', u('a')),
       [],
@@ -82,7 +82,7 @@ test('select.selectAll()', function(t) {
     st.end()
   })
 
-  t.test('descendant selector', function(st) {
+  t.test('descendant selector', function (st) {
     st.deepEqual(
       selectAll(
         'b',
@@ -132,7 +132,7 @@ test('select.selectAll()', function(t) {
     st.end()
   })
 
-  t.test('child selector', function(st) {
+  t.test('child selector', function (st) {
     st.deepEqual(
       selectAll(
         'c > d',
@@ -165,7 +165,7 @@ test('select.selectAll()', function(t) {
     st.end()
   })
 
-  t.test('adjacent sibling selector', function(st) {
+  t.test('adjacent sibling selector', function (st) {
     st.deepEqual(
       selectAll(
         'c + b',
@@ -198,7 +198,7 @@ test('select.selectAll()', function(t) {
     st.end()
   })
 
-  t.test('general sibling selector', function(st) {
+  t.test('general sibling selector', function (st) {
     st.deepEqual(
       selectAll(
         'c ~ b',
@@ -240,8 +240,8 @@ test('select.selectAll()', function(t) {
     st.end()
   })
 
-  t.test('parent-sensitive pseudo-selectors', function(st) {
-    st.test(':first-child', function(sst) {
+  t.test('parent-sensitive pseudo-selectors', function (st) {
+    st.test(':first-child', function (sst) {
       sst.deepEqual(
         selectAll(
           ':first-child',
@@ -278,7 +278,7 @@ test('select.selectAll()', function(t) {
       sst.end()
     })
 
-    st.test(':last-child', function(sst) {
+    st.test(':last-child', function (sst) {
       sst.deepEqual(
         selectAll(
           ':last-child',
@@ -315,7 +315,7 @@ test('select.selectAll()', function(t) {
       sst.end()
     })
 
-    st.test(':only-child', function(sst) {
+    st.test(':only-child', function (sst) {
       sst.deepEqual(
         selectAll(
           ':only-child',
@@ -343,7 +343,7 @@ test('select.selectAll()', function(t) {
       sst.end()
     })
 
-    st.test(':nth-child', function(sst) {
+    st.test(':nth-child', function (sst) {
       sst.deepEqual(
         selectAll(
           'b:nth-child(odd)',
@@ -411,7 +411,7 @@ test('select.selectAll()', function(t) {
       sst.end()
     })
 
-    st.test(':nth-last-child', function(sst) {
+    st.test(':nth-last-child', function (sst) {
       sst.deepEqual(
         selectAll(
           'b:nth-last-child(odd)',
@@ -479,7 +479,7 @@ test('select.selectAll()', function(t) {
       sst.end()
     })
 
-    st.test(':nth-of-type', function(sst) {
+    st.test(':nth-of-type', function (sst) {
       sst.deepEqual(
         selectAll(
           'b:nth-of-type(odd)',
@@ -547,7 +547,7 @@ test('select.selectAll()', function(t) {
       sst.end()
     })
 
-    st.test(':nth-last-of-type', function(sst) {
+    st.test(':nth-last-of-type', function (sst) {
       sst.deepEqual(
         selectAll(
           'b:nth-last-of-type(odd)',
@@ -615,7 +615,7 @@ test('select.selectAll()', function(t) {
       sst.end()
     })
 
-    st.test(':first-of-type', function(sst) {
+    st.test(':first-of-type', function (sst) {
       sst.deepEqual(
         selectAll(
           'b:first-of-type',
@@ -641,7 +641,7 @@ test('select.selectAll()', function(t) {
       sst.end()
     })
 
-    st.test(':last-of-type', function(sst) {
+    st.test(':last-of-type', function (sst) {
       sst.deepEqual(
         selectAll(
           'b:last-of-type',
@@ -667,7 +667,7 @@ test('select.selectAll()', function(t) {
       sst.end()
     })
 
-    st.test(':only-of-type', function(sst) {
+    st.test(':only-of-type', function (sst) {
       sst.deepEqual(
         selectAll(
           'c:only-of-type',
@@ -707,7 +707,7 @@ test('select.selectAll()', function(t) {
       sst.end()
     })
 
-    st.test(':root', function(sst) {
+    st.test(':root', function (sst) {
       sst.deepEqual(
         selectAll(':root', u('a', [u('b'), u('c', [u('d')])])),
         [u('a', [u('b'), u('c', [u('d')])])],
@@ -717,7 +717,7 @@ test('select.selectAll()', function(t) {
       sst.end()
     })
 
-    st.test(':scope', function(sst) {
+    st.test(':scope', function (sst) {
       sst.deepEqual(
         selectAll(':scope', u('a', [u('b'), u('c', [u('d')])])),
         [u('a', [u('b'), u('c', [u('d')])])],

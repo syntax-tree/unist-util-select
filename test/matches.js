@@ -4,10 +4,10 @@ var test = require('tape')
 var u = require('unist-builder')
 var matches = require('..').matches
 
-test('select.matches()', function(t) {
-  t.test('invalid selector', function(st) {
+test('select.matches()', function (t) {
+  t.test('invalid selector', function (st) {
     st.throws(
-      function() {
+      function () {
         matches()
       },
       /Error: Expected `string` as selector, not `undefined`/,
@@ -15,7 +15,7 @@ test('select.matches()', function(t) {
     )
 
     st.throws(
-      function() {
+      function () {
         matches([], u('root', []))
       },
       /Error: Expected `string` as selector, not ``/,
@@ -23,7 +23,7 @@ test('select.matches()', function(t) {
     )
 
     st.throws(
-      function() {
+      function () {
         matches('@supports (transform-origin: 5% 5%) {}', u('root', []))
       },
       /Error: Rule expected but "@" found./,
@@ -31,7 +31,7 @@ test('select.matches()', function(t) {
     )
 
     st.throws(
-      function() {
+      function () {
         matches('[foo%=bar]', u('root', []))
       },
       /Error: Expected "=" but "%" found./,
@@ -39,7 +39,7 @@ test('select.matches()', function(t) {
     )
 
     st.throws(
-      function() {
+      function () {
         matches(':active', u('root', []))
       },
       /Error: Unknown pseudo-selector `active`/,
@@ -47,7 +47,7 @@ test('select.matches()', function(t) {
     )
 
     st.throws(
-      function() {
+      function () {
         matches(':nth-foo(2n+1)', u('root', []))
       },
       /Error: Unknown pseudo-selector `nth-foo`/,
@@ -55,7 +55,7 @@ test('select.matches()', function(t) {
     )
 
     st.throws(
-      function() {
+      function () {
         matches('::before', u('root', []))
       },
       /Error: Unexpected pseudo-element or empty pseudo-class/,
@@ -63,7 +63,7 @@ test('select.matches()', function(t) {
     )
 
     st.throws(
-      function() {
+      function () {
         matches('foo bar', u('root', []))
       },
       /Error: Expected selector without nesting/,
@@ -71,7 +71,7 @@ test('select.matches()', function(t) {
     )
 
     st.throws(
-      function() {
+      function () {
         matches('foo > bar', u('root', []))
       },
       /Error: Expected selector without nesting/,
@@ -81,7 +81,7 @@ test('select.matches()', function(t) {
     st.end()
   })
 
-  t.test('parent-sensitive pseudo-selectors', function(st) {
+  t.test('parent-sensitive pseudo-selectors', function (st) {
     var simplePseudos = [
       'first-child',
       'first-of-type',
@@ -98,9 +98,9 @@ test('select.matches()', function(t) {
       'nth-last-of-type'
     ]
 
-    simplePseudos.forEach(function(pseudo) {
+    simplePseudos.forEach(function (pseudo) {
       st.throws(
-        function() {
+        function () {
           matches(':' + pseudo, u('root', []))
         },
         new RegExp('Error: Cannot use `:' + pseudo + '` without parent'),
@@ -108,9 +108,9 @@ test('select.matches()', function(t) {
       )
     })
 
-    functionalPseudos.forEach(function(pseudo) {
+    functionalPseudos.forEach(function (pseudo) {
       st.throws(
-        function() {
+        function () {
           matches(':' + pseudo + '()', u('root', []))
         },
         new RegExp('Error: Cannot use `:' + pseudo + '` without parent'),
@@ -121,7 +121,7 @@ test('select.matches()', function(t) {
     st.end()
   })
 
-  t.test('general', function(st) {
+  t.test('general', function (st) {
     st.notOk(
       matches('', u('root', [])),
       'false for the empty string as selector'
@@ -136,14 +136,14 @@ test('select.matches()', function(t) {
     st.end()
   })
 
-  t.test('multiple selectors', function(st) {
+  t.test('multiple selectors', function (st) {
     st.ok(matches('a, b', u('a')), 'true')
     st.notOk(matches('b, c', u('a')), 'false')
 
     st.end()
   })
 
-  t.test('tag-names: `div`, `*`', function(st) {
+  t.test('tag-names: `div`, `*`', function (st) {
     st.ok(matches('*', u('a')), 'true for `*`')
     st.ok(matches('b', u('b')), 'true if types matches')
     st.notOk(matches('b', u('a')), 'false if types don’t matches')
@@ -151,9 +151,9 @@ test('select.matches()', function(t) {
     st.end()
   })
 
-  t.test('id: `#id`', function(st) {
+  t.test('id: `#id`', function (st) {
     st.throws(
-      function() {
+      function () {
         matches('#one', u('a'))
       },
       /Error: Invalid selector: id/,
@@ -163,9 +163,9 @@ test('select.matches()', function(t) {
     st.end()
   })
 
-  t.test('class: `.class`', function(st) {
+  t.test('class: `.class`', function (st) {
     st.throws(
-      function() {
+      function () {
         matches('.one', u('a'))
       },
       /Error: Invalid selector: class/,
@@ -175,7 +175,7 @@ test('select.matches()', function(t) {
     st.end()
   })
 
-  t.test('attributes, existence: `[attr]`', function(st) {
+  t.test('attributes, existence: `[attr]`', function (st) {
     st.ok(
       matches('[foo]', u('a', {foo: 'alpha'})),
       'true if attribute exists (string)'
@@ -208,7 +208,7 @@ test('select.matches()', function(t) {
     st.end()
   })
 
-  t.test('attributes, equality: `[attr=value]`', function(st) {
+  t.test('attributes, equality: `[attr=value]`', function (st) {
     st.ok(
       matches('[foo=alpha]', u('a', {foo: 'alpha'})),
       'true if attribute matches (string)'
@@ -270,7 +270,7 @@ test('select.matches()', function(t) {
     st.end()
   })
 
-  t.test('attributes, begins: `[attr^=value]`', function(st) {
+  t.test('attributes, begins: `[attr^=value]`', function (st) {
     st.ok(
       matches('[foo^=al]', u('a', {foo: 'alpha'})),
       'true if attribute matches (string)'
@@ -300,7 +300,7 @@ test('select.matches()', function(t) {
     st.end()
   })
 
-  t.test('attributes, ends: `[attr$=value]`', function(st) {
+  t.test('attributes, ends: `[attr$=value]`', function (st) {
     st.ok(
       matches('[foo$=ha]', u('a', {foo: 'alpha'})),
       'true if attribute matches (string)'
@@ -330,7 +330,7 @@ test('select.matches()', function(t) {
     st.end()
   })
 
-  t.test('attributes, contains: `[attr*=value]`', function(st) {
+  t.test('attributes, contains: `[attr*=value]`', function (st) {
     st.ok(
       matches('[foo*=ph]', u('a', {foo: 'alpha'})),
       'true if attribute matches (string)'
@@ -359,7 +359,7 @@ test('select.matches()', function(t) {
     st.end()
   })
 
-  t.test('attributes, contains in a list: `[attr~=value]`', function(st) {
+  t.test('attributes, contains in a list: `[attr~=value]`', function (st) {
     st.ok(
       matches('[foo~=alpha]', u('a', {foo: 'alpha'})),
       'true if attribute matches (string)'
@@ -437,9 +437,9 @@ test('select.matches()', function(t) {
     st.end()
   })
 
-  t.test('pseudo-classes', function(st) {
-    ;[':any', ':matches'].forEach(function(pseudo) {
-      st.test(pseudo, function(sst) {
+  t.test('pseudo-classes', function (st) {
+    ;[':any', ':matches'].forEach(function (pseudo) {
+      st.test(pseudo, function (sst) {
         sst.ok(
           matches(pseudo + '(a, [b])', u('a')),
           'true if any matches (type)'
@@ -461,7 +461,7 @@ test('select.matches()', function(t) {
       })
     })
 
-    st.test(':not()', function(sst) {
+    st.test(':not()', function (sst) {
       sst.notOk(matches(':not(a, [b])', u('a')), 'false if any matches (type)')
       sst.notOk(
         matches(':not(a, [b])', u('c', {b: 1})),
@@ -476,12 +476,12 @@ test('select.matches()', function(t) {
       sst.end()
     })
 
-    st.test(':has', function(sst) {
-      sst.doesNotThrow(function() {
+    st.test(':has', function (sst) {
+      sst.doesNotThrow(function () {
         matches('a:not(:has())', u('b'))
       }, 'should not throw on empty selectors')
 
-      sst.doesNotThrow(function() {
+      sst.doesNotThrow(function () {
         matches('a:has()', u('b'))
       }, 'should not throw on empty selectors')
 
@@ -583,8 +583,8 @@ test('select.matches()', function(t) {
 
       sst.end()
     })
-    ;[':empty', ':blank'].forEach(function(pseudo) {
-      st.test(pseudo, function(sst) {
+    ;[':empty', ':blank'].forEach(function (pseudo) {
+      st.test(pseudo, function (sst) {
         sst.ok(matches(pseudo, u('a')), 'true for void node')
         sst.ok(matches(pseudo, u('a', [])), 'true for parent without children')
         sst.notOk(matches(pseudo, u('a', '')), 'false for falsey literal')
@@ -595,12 +595,12 @@ test('select.matches()', function(t) {
       })
     })
 
-    st.test(':root', function(sst) {
+    st.test(':root', function (sst) {
       sst.ok(matches(':root', u('a')), 'true')
       sst.end()
     })
 
-    st.test(':scope', function(sst) {
+    st.test(':scope', function (sst) {
       sst.ok(matches(':scope', u('a')), 'true')
       sst.end()
     })

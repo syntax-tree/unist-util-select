@@ -4,10 +4,10 @@ var test = require('tape')
 var u = require('unist-builder')
 var select = require('..').select
 
-test('select.select()', function(t) {
-  t.test('invalid selectors', function(st) {
+test('select.select()', function (t) {
+  t.test('invalid selectors', function (st) {
     st.throws(
-      function() {
+      function () {
         select()
       },
       /Error: Expected `string` as selector, not `undefined`/,
@@ -15,7 +15,7 @@ test('select.select()', function(t) {
     )
 
     st.throws(
-      function() {
+      function () {
         select([], u('a'))
       },
       /Error: Expected `string` as selector, not ``/,
@@ -23,7 +23,7 @@ test('select.select()', function(t) {
     )
 
     st.throws(
-      function() {
+      function () {
         select('@supports (transform-origin: 5% 5%) {}', u('a'))
       },
       /Error: Rule expected but "@" found./,
@@ -31,7 +31,7 @@ test('select.select()', function(t) {
     )
 
     st.throws(
-      function() {
+      function () {
         select('[foo%=bar]', u('a'))
       },
       /Error: Expected "=" but "%" found./,
@@ -39,7 +39,7 @@ test('select.select()', function(t) {
     )
 
     st.throws(
-      function() {
+      function () {
         select(':active', u('a'))
       },
       /Error: Unknown pseudo-selector `active`/,
@@ -47,7 +47,7 @@ test('select.select()', function(t) {
     )
 
     st.throws(
-      function() {
+      function () {
         select(':nth-foo(2n+1)', u('a'))
       },
       /Error: Unknown pseudo-selector `nth-foo`/,
@@ -55,7 +55,7 @@ test('select.select()', function(t) {
     )
 
     st.throws(
-      function() {
+      function () {
         select('::before', u('a'))
       },
       /Error: Unexpected pseudo-element or empty pseudo-class/,
@@ -65,7 +65,7 @@ test('select.select()', function(t) {
     st.end()
   })
 
-  t.test('general', function(st) {
+  t.test('general', function (st) {
     st.equal(
       select('', u('a')),
       null,
@@ -83,7 +83,7 @@ test('select.select()', function(t) {
     st.end()
   })
 
-  t.test('descendant selector', function(st) {
+  t.test('descendant selector', function (st) {
     st.deepEqual(
       select(
         'b',
@@ -122,7 +122,7 @@ test('select.select()', function(t) {
     st.end()
   })
 
-  t.test('child selector', function(st) {
+  t.test('child selector', function (st) {
     st.deepEqual(
       select('c > e', u('a', [u('b'), u('c', [u('d'), u('e', [u('f')])])])),
       u('e', [u('f')]),
@@ -149,7 +149,7 @@ test('select.select()', function(t) {
     st.end()
   })
 
-  t.test('adjacent sibling selector', function(st) {
+  t.test('adjacent sibling selector', function (st) {
     st.deepEqual(
       select(
         'c + b',
@@ -182,7 +182,7 @@ test('select.select()', function(t) {
     st.end()
   })
 
-  t.test('general sibling selector', function(st) {
+  t.test('general sibling selector', function (st) {
     st.deepEqual(
       select(
         'c ~ b',
@@ -224,8 +224,8 @@ test('select.select()', function(t) {
     st.end()
   })
 
-  t.test('parent-sensitive pseudo-selectors', function(st) {
-    st.test(':first-child', function(sst) {
+  t.test('parent-sensitive pseudo-selectors', function (st) {
+    st.test(':first-child', function (sst) {
       sst.deepEqual(
         select(
           ':first-child',
@@ -253,7 +253,7 @@ test('select.select()', function(t) {
       sst.end()
     })
 
-    st.test(':last-child', function(sst) {
+    st.test(':last-child', function (sst) {
       sst.deepEqual(
         select(
           ':last-child',
@@ -281,7 +281,7 @@ test('select.select()', function(t) {
       sst.end()
     })
 
-    st.test(':only-child', function(sst) {
+    st.test(':only-child', function (sst) {
       sst.deepEqual(
         select(
           ':only-child',
@@ -309,7 +309,7 @@ test('select.select()', function(t) {
       sst.end()
     })
 
-    st.test(':nth-child', function(sst) {
+    st.test(':nth-child', function (sst) {
       sst.deepEqual(
         select(
           'b:nth-child(odd)',
@@ -377,7 +377,7 @@ test('select.select()', function(t) {
       sst.end()
     })
 
-    st.test(':nth-last-child', function(sst) {
+    st.test(':nth-last-child', function (sst) {
       sst.deepEqual(
         select(
           'b:nth-last-child(odd)',
@@ -445,7 +445,7 @@ test('select.select()', function(t) {
       sst.end()
     })
 
-    st.test(':nth-of-type', function(sst) {
+    st.test(':nth-of-type', function (sst) {
       sst.deepEqual(
         select(
           'b:nth-of-type(odd)',
@@ -513,7 +513,7 @@ test('select.select()', function(t) {
       sst.end()
     })
 
-    st.test(':nth-last-of-type', function(sst) {
+    st.test(':nth-last-of-type', function (sst) {
       sst.deepEqual(
         select(
           'b:nth-last-of-type(odd)',
@@ -581,7 +581,7 @@ test('select.select()', function(t) {
       sst.end()
     })
 
-    st.test(':first-of-type', function(sst) {
+    st.test(':first-of-type', function (sst) {
       sst.deepEqual(
         select(
           'b:first-of-type',
@@ -607,7 +607,7 @@ test('select.select()', function(t) {
       sst.end()
     })
 
-    st.test(':last-of-type', function(sst) {
+    st.test(':last-of-type', function (sst) {
       sst.deepEqual(
         select(
           'b:last-of-type',
@@ -633,7 +633,7 @@ test('select.select()', function(t) {
       sst.end()
     })
 
-    st.test(':only-of-type', function(sst) {
+    st.test(':only-of-type', function (sst) {
       sst.deepEqual(
         select(
           'c:only-of-type',
@@ -673,7 +673,7 @@ test('select.select()', function(t) {
       sst.end()
     })
 
-    st.test(':root', function(sst) {
+    st.test(':root', function (sst) {
       sst.deepEqual(
         select(':root', u('a', [u('b'), u('c', [u('d')])])),
         u('a', [u('b'), u('c', [u('d')])]),
@@ -683,7 +683,7 @@ test('select.select()', function(t) {
       sst.end()
     })
 
-    st.test(':scope', function(sst) {
+    st.test(':scope', function (sst) {
       sst.deepEqual(
         select(':scope', u('a', [u('b'), u('c', [u('d')])])),
         u('a', [u('b'), u('c', [u('d')])]),

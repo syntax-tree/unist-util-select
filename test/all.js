@@ -4,7 +4,7 @@ var test = require('tape')
 var u = require('unist-builder')
 var selectAll = require('..').selectAll
 
-test('all together now', function(t) {
+test('all together now', function (t) {
   t.deepEqual(
     selectAll(
       'a > b[d]:nth-of-type(odd)',
