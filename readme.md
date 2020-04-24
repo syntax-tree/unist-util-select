@@ -120,7 +120,7 @@ Yields:
 *   [x] `code + paragraph` (combinator: adjacent sibling selector)
 *   [x] `code ~ paragraph` (combinator: general sibling selector)
 *   [x] `[attr]` (attribute existence, checks that the value on the tree is not
-    nully)
+    nullish)
 *   [x] `[attr=value]` (attribute equality, this stringifies values on the tree)
 *   [x] `[attr^=value]` (attribute begins with, only works on strings)
 *   [x] `[attr$=value]` (attribute ends with, only works on strings)
