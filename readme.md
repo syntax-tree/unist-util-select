@@ -155,13 +155,12 @@ Yields:
 
 ## Related
 
-*   [`unist-util-filter`](https://github.com/eush77/unist-util-filter)
+*   [`unist-util-filter`](https://github.com/syntax-tree/unist-util-filter)
     — Create a new tree with all nodes that pass a test
 *   [`unist-util-map`](https://github.com/syntax-tree/unist-util-map)
     — Create a new tree with all nodes mapped by a given function
 *   [`unist-util-flatmap`](https://gitlab.com/staltz/unist-util-flatmap)
-    — Create a new tree by mapping (to an array) with the provided function and
-    then flattening
+    — Create a new tree by mapping (to an array) with the given function
 *   [`unist-util-is`](https://github.com/syntax-tree/unist-util-is)
     — Check if a node passes a test
 *   [`unist-util-remove`](https://github.com/syntax-tree/unist-util-remove)
