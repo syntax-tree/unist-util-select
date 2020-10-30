@@ -89,9 +89,18 @@
       "types"
     ],
     "rules": {
+      "eqeqeq": [
+        "error",
+        "always",
+        {
+          "null": "ignore"
+        }
+      ],
+      "no-eq-null": "off",
       "max-params": "off",
-      "unicorn/prefer-reflect-apply": "off",
-      "unicorn/prefer-includes": "off"
+      "unicorn/explicit-length-check": "off",
+      "unicorn/prefer-includes": "off",
+      "unicorn/prefer-reflect-apply": "off"
     }
   },
   "remarkConfig": {
