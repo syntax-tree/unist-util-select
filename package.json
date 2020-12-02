@@ -47,7 +47,7 @@
   "dependencies": {
     "css-selector-parser": "^1.0.0",
     "not": "^0.1.0",
-    "nth-check": "^1.0.0",
+    "nth-check": "^2.0.0",
     "unist-util-is": "^4.0.0",
     "zwitch": "^1.0.0"
   },
