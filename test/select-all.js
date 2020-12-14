@@ -727,6 +727,16 @@ test('select.selectAll()', function (t) {
       sst.end()
     })
 
+    st.test(':has', function (sst) {
+      sst.deepEqual(
+        selectAll('c:has(:first-child)', u('a', [u('b'), u('c', [u('d')])])),
+        [u('c', [u('d')])],
+        'should select a node'
+      )
+
+      sst.end()
+    })
+
     st.end()
   })
 

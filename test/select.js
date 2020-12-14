@@ -693,6 +693,16 @@ test('select.select()', function (t) {
       sst.end()
     })
 
+    st.test(':has', function (sst) {
+      sst.deepEqual(
+        select('c:has(:first-child)', u('a', [u('b'), u('c', [u('d')])])),
+        u('c', [u('d')]),
+        'should select a node'
+      )
+
+      sst.end()
+    })
+
     st.end()
   })
 
