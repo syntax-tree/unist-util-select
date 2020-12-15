@@ -8,7 +8,9 @@ var any = require('./lib/any')
 var parse = require('./lib/parse')
 
 function matches(selector, node) {
-  return Boolean(any(parse(selector), node, {one: true, shallow: true})[0])
+  return Boolean(
+    any(parse(selector), node, {one: true, shallow: true, any: any})[0]
+  )
 }
 
 function select(selector, node) {
