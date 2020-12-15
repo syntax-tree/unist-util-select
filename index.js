@@ -14,9 +14,9 @@ function matches(selector, node) {
 }
 
 function select(selector, node) {
-  return any(parse(selector), node, {one: true})[0] || null
+  return any(parse(selector), node, {one: true, any: any})[0] || null
 }
 
 function selectAll(selector, node) {
-  return any(parse(selector), node, {})
+  return any(parse(selector), node, {any: any})
 }
