@@ -59,7 +59,7 @@
     "remark-preset-wooorm": "^8.0.0",
     "tape": "^5.0.0",
     "unist-builder": "^2.0.0",
-    "xo": "^0.36.0"
+    "xo": "^0.38.0"
   },
   "scripts": {
     "format": "remark . -qfo && prettier . -w --loglevel warn && xo --fix",
@@ -98,6 +98,7 @@
       ],
       "no-eq-null": "off",
       "max-params": "off",
+      "unicorn/no-array-for-each": "off",
       "unicorn/explicit-length-check": "off",
       "unicorn/prefer-includes": "off",
       "unicorn/prefer-reflect-apply": "off"
