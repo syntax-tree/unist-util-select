@@ -1,8 +1,8 @@
 'use strict'
 
-var test = require('tape')
-var u = require('unist-builder')
-var select = require('..').select
+import test from 'tape'
+import {u} from 'unist-builder'
+import {select} from '../index.js'
 
 test('select.select()', function (t) {
   t.test('invalid selectors', function (st) {

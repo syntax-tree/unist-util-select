@@ -1,8 +1,8 @@
 'use strict'
 
-var test = require('tape')
-var u = require('unist-builder')
-var matches = require('..').matches
+import test from 'tape'
+import {u} from 'unist-builder'
+import {matches} from '../index.js'
 
 test('select.matches()', function (t) {
   t.test('invalid selector', function (st) {

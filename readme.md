@@ -19,6 +19,9 @@ This information is not stored in unist, so selectors like that don’t work.
 
 ## Install
 
+This package is [ESM only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c):
+Node 12+ is needed to use it and it must be `import`ed instead of `require`d.
+
 [npm][]:
 
 ```sh
@@ -27,7 +30,10 @@ npm install unist-util-select
 
 ## API
 
-### `select.matches(selector, node)`
+This package exports the following identifiers: `matches`, `select`, `selectAll`.
+There is no default export.
+
+### `matches(selector, node)`
 
 Check that the given [node][] matches `selector`.
 Returns `boolean`, whether the node matches or not.
@@ -38,22 +44,22 @@ Thus, nesting in selectors is not supported (`paragraph strong`,
 This only checks that the given element matches the selector.
 
 ```js
-var u = require('unist-builder')
-var matches = require('unist-util-select').matches
+import {u} from 'unist-builder'
+import {matches} from 'unist-util-select'
 
 matches('strong, em', u('strong', [u('text', 'important')])) // => true
 matches('[lang]', u('code', {lang: 'js'}, 'console.log(1)')) // => true
 ```
 
-### `select.select(selector, tree)`
+### `select(selector, tree)`
 
 Select the first node matching `selector` in the given `tree` (could be the
 tree itself).
 Returns the found [node][], if any.
 
 ```js
-var u = require('unist-builder')
-var select = require('unist-util-select').select
+import {u} from 'unist-builder'
+import {select} from 'unist-util-select'
 
 console.log(
   select(
@@ -75,15 +81,15 @@ Yields:
 {type: 'paragraph', children: [{type: 'text', value: 'Delta'}]}
 ```
 
-### `select.selectAll(selector, tree)`
+### `selectAll(selector, tree)`
 
 Select all nodes matching `selector` in the given `tree` (could include the
 tree itself).
 Returns all found [node][]s, if any.
 
 ```js
-var u = require('unist-builder')
-var selectAll = require('unist-util-select').selectAll
+import {u} from 'unist-builder'
+import {selectAll} from 'unist-util-select'
 
 console.log(
   selectAll(
