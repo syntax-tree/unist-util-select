@@ -1,5 +1,3 @@
-'use strict'
-
 /* eslint-disable import/no-unassigned-import */
 import './matches.js'
 import './select.js'

@@ -1,5 +1,3 @@
-'use strict'
-
 import test from 'tape'
 import {u} from 'unist-builder'
 import {selectAll} from '../index.js'
@@ -8,6 +6,7 @@ test('select.selectAll()', function (t) {
   t.test('invalid selectors', function (st) {
     st.throws(
       function () {
+        // @ts-ignore runtime.
         selectAll()
       },
       /Error: Expected `string` as selector, not `undefined`/,
@@ -16,6 +15,7 @@ test('select.selectAll()', function (t) {
 
     st.throws(
       function () {
+        // @ts-ignore runtime.
         selectAll([], u('a'))
       },
       /Error: Expected `string` as selector, not ``/,

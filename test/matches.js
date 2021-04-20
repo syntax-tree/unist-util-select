@@ -1,5 +1,3 @@
-'use strict'
-
 import test from 'tape'
 import {u} from 'unist-builder'
 import {matches} from '../index.js'
@@ -8,6 +6,7 @@ test('select.matches()', function (t) {
   t.test('invalid selector', function (st) {
     st.throws(
       function () {
+        // @ts-ignore runtime.
         matches()
       },
       /Error: Expected `string` as selector, not `undefined`/,
@@ -16,6 +15,7 @@ test('select.matches()', function (t) {
 
     st.throws(
       function () {
+        // @ts-ignore runtime.
         matches([], u('root', []))
       },
       /Error: Expected `string` as selector, not ``/,

@@ -1,5 +1,3 @@
-'use strict'
-
 import test from 'tape'
 import {u} from 'unist-builder'
 import {selectAll} from '../index.js'

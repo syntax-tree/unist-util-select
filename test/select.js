@@ -1,5 +1,3 @@
-'use strict'
-
 import test from 'tape'
 import {u} from 'unist-builder'
 import {select} from '../index.js'
@@ -8,6 +6,7 @@ test('select.select()', function (t) {
   t.test('invalid selectors', function (st) {
     st.throws(
       function () {
+        // @ts-ignore runtime.
         select()
       },
       /Error: Expected `string` as selector, not `undefined`/,
@@ -16,6 +15,7 @@ test('select.select()', function (t) {
 
     st.throws(
       function () {
+        // @ts-ignore runtime.
         select([], u('a'))
       },
       /Error: Expected `string` as selector, not ``/,
@@ -133,7 +133,7 @@ test('select.select()', function (t) {
       select(
         'b > b',
         u('a', [
-          u('b', {x: 1}, [u('b', {x: 2}), u('b', {x: 3}, u('b', {x: 4}))])
+          u('b', {x: 1}, [u('b', {x: 2}), u('b', {x: 3}, [u('b', {x: 4})])])
         ])
       ),
       u('b', {x: 2}),
