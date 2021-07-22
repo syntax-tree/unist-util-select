@@ -1,3 +1,7 @@
+/**
+ * @typedef {import('unist').Literal<string>} Literal
+ */
+
 import test from 'tape'
 import {u} from 'unist-builder'
 import {matches} from '../index.js'
@@ -6,7 +10,7 @@ test('select.matches()', function (t) {
   t.test('invalid selector', function (st) {
     st.throws(
       function () {
-        // @ts-ignore runtime.
+        // @ts-expect-error runtime.
         matches()
       },
       /Error: Expected `string` as selector, not `undefined`/,
@@ -15,7 +19,7 @@ test('select.matches()', function (t) {
 
     st.throws(
       function () {
-        // @ts-ignore runtime.
+        // @ts-expect-error runtime.
         matches([], u('root', []))
       },
       /Error: Expected `string` as selector, not ``/,
@@ -131,7 +135,10 @@ test('select.matches()', function (t) {
       'false for a white-space only selector'
     )
     st.notOk(matches('*'), 'false if not given a node')
-    st.ok(matches('*', {type: 'text', value: 'a'}), 'true if given an node')
+    st.ok(
+      matches('*', /** @type {Literal} */ ({type: 'text', value: 'a'})),
+      'true if given an node'
+    )
 
     st.end()
   })

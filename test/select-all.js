@@ -6,7 +6,7 @@ test('select.selectAll()', function (t) {
   t.test('invalid selectors', function (st) {
     st.throws(
       function () {
-        // @ts-ignore runtime.
+        // @ts-expect-error runtime.
         selectAll()
       },
       /Error: Expected `string` as selector, not `undefined`/,
@@ -15,7 +15,7 @@ test('select.selectAll()', function (t) {
 
     st.throws(
       function () {
-        // @ts-ignore runtime.
+        // @ts-expect-error runtime.
         selectAll([], u('a'))
       },
       /Error: Expected `string` as selector, not ``/,
