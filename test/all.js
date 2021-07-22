@@ -2,7 +2,7 @@ import test from 'tape'
 import {u} from 'unist-builder'
 import {selectAll} from '../index.js'
 
-test('all together now', function (t) {
+test('all together now', (t) => {
   t.deepEqual(
     selectAll(
       'a > b[d]:nth-of-type(odd)',

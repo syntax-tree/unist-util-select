@@ -2,10 +2,10 @@ import test from 'tape'
 import {u} from 'unist-builder'
 import {select} from '../index.js'
 
-test('select.select()', function (t) {
-  t.test('invalid selectors', function (st) {
+test('select.select()', (t) => {
+  t.test('invalid selectors', (st) => {
     st.throws(
-      function () {
+      () => {
         // @ts-expect-error runtime.
         select()
       },
@@ -14,7 +14,7 @@ test('select.select()', function (t) {
     )
 
     st.throws(
-      function () {
+      () => {
         // @ts-expect-error runtime.
         select([], u('a'))
       },
@@ -23,7 +23,7 @@ test('select.select()', function (t) {
     )
 
     st.throws(
-      function () {
+      () => {
         select('@supports (transform-origin: 5% 5%) {}', u('a'))
       },
       /Error: Rule expected but "@" found./,
@@ -31,7 +31,7 @@ test('select.select()', function (t) {
     )
 
     st.throws(
-      function () {
+      () => {
         select('[foo%=bar]', u('a'))
       },
       /Error: Expected "=" but "%" found./,
@@ -39,7 +39,7 @@ test('select.select()', function (t) {
     )
 
     st.throws(
-      function () {
+      () => {
         select(':active', u('a'))
       },
       /Error: Unknown pseudo-selector `active`/,
@@ -47,7 +47,7 @@ test('select.select()', function (t) {
     )
 
     st.throws(
-      function () {
+      () => {
         select(':nth-foo(2n+1)', u('a'))
       },
       /Error: Unknown pseudo-selector `nth-foo`/,
@@ -55,7 +55,7 @@ test('select.select()', function (t) {
     )
 
     st.throws(
-      function () {
+      () => {
         select('::before', u('a'))
       },
       /Error: Unexpected pseudo-element or empty pseudo-class/,
@@ -65,7 +65,7 @@ test('select.select()', function (t) {
     st.end()
   })
 
-  t.test('general', function (st) {
+  t.test('general', (st) => {
     st.equal(
       select('', u('a')),
       null,
@@ -83,7 +83,7 @@ test('select.select()', function (t) {
     st.end()
   })
 
-  t.test('descendant selector', function (st) {
+  t.test('descendant selector', (st) => {
     st.deepEqual(
       select(
         'b',
@@ -122,7 +122,7 @@ test('select.select()', function (t) {
     st.end()
   })
 
-  t.test('child selector', function (st) {
+  t.test('child selector', (st) => {
     st.deepEqual(
       select('c > e', u('a', [u('b'), u('c', [u('d'), u('e', [u('f')])])])),
       u('e', [u('f')]),
@@ -149,7 +149,7 @@ test('select.select()', function (t) {
     st.end()
   })
 
-  t.test('adjacent sibling selector', function (st) {
+  t.test('adjacent sibling selector', (st) => {
     st.deepEqual(
       select(
         'c + b',
@@ -182,7 +182,7 @@ test('select.select()', function (t) {
     st.end()
   })
 
-  t.test('general sibling selector', function (st) {
+  t.test('general sibling selector', (st) => {
     st.deepEqual(
       select(
         'c ~ b',
@@ -224,8 +224,8 @@ test('select.select()', function (t) {
     st.end()
   })
 
-  t.test('parent-sensitive pseudo-selectors', function (st) {
-    st.test(':first-child', function (sst) {
+  t.test('parent-sensitive pseudo-selectors', (st) => {
+    st.test(':first-child', (sst) => {
       sst.deepEqual(
         select(
           ':first-child',
@@ -253,7 +253,7 @@ test('select.select()', function (t) {
       sst.end()
     })
 
-    st.test(':last-child', function (sst) {
+    st.test(':last-child', (sst) => {
       sst.deepEqual(
         select(
           ':last-child',
@@ -281,7 +281,7 @@ test('select.select()', function (t) {
       sst.end()
     })
 
-    st.test(':only-child', function (sst) {
+    st.test(':only-child', (sst) => {
       sst.deepEqual(
         select(
           ':only-child',
@@ -309,7 +309,7 @@ test('select.select()', function (t) {
       sst.end()
     })
 
-    st.test(':nth-child', function (sst) {
+    st.test(':nth-child', (sst) => {
       sst.deepEqual(
         select(
           'b:nth-child(odd)',
@@ -377,7 +377,7 @@ test('select.select()', function (t) {
       sst.end()
     })
 
-    st.test(':nth-last-child', function (sst) {
+    st.test(':nth-last-child', (sst) => {
       sst.deepEqual(
         select(
           'b:nth-last-child(odd)',
@@ -445,7 +445,7 @@ test('select.select()', function (t) {
       sst.end()
     })
 
-    st.test(':nth-of-type', function (sst) {
+    st.test(':nth-of-type', (sst) => {
       sst.deepEqual(
         select(
           'b:nth-of-type(odd)',
@@ -513,7 +513,7 @@ test('select.select()', function (t) {
       sst.end()
     })
 
-    st.test(':nth-last-of-type', function (sst) {
+    st.test(':nth-last-of-type', (sst) => {
       sst.deepEqual(
         select(
           'b:nth-last-of-type(odd)',
@@ -581,7 +581,7 @@ test('select.select()', function (t) {
       sst.end()
     })
 
-    st.test(':first-of-type', function (sst) {
+    st.test(':first-of-type', (sst) => {
       sst.deepEqual(
         select(
           'b:first-of-type',
@@ -607,7 +607,7 @@ test('select.select()', function (t) {
       sst.end()
     })
 
-    st.test(':last-of-type', function (sst) {
+    st.test(':last-of-type', (sst) => {
       sst.deepEqual(
         select(
           'b:last-of-type',
@@ -633,7 +633,7 @@ test('select.select()', function (t) {
       sst.end()
     })
 
-    st.test(':only-of-type', function (sst) {
+    st.test(':only-of-type', (sst) => {
       sst.deepEqual(
         select(
           'c:only-of-type',
@@ -673,7 +673,7 @@ test('select.select()', function (t) {
       sst.end()
     })
 
-    st.test(':root', function (sst) {
+    st.test(':root', (sst) => {
       sst.deepEqual(
         select(':root', u('a', [u('b'), u('c', [u('d')])])),
         u('a', [u('b'), u('c', [u('d')])]),
@@ -683,7 +683,7 @@ test('select.select()', function (t) {
       sst.end()
     })
 
-    st.test(':scope', function (sst) {
+    st.test(':scope', (sst) => {
       sst.deepEqual(
         select(':scope', u('a', [u('b'), u('c', [u('d')])])),
         u('a', [u('b'), u('c', [u('d')])]),
@@ -693,7 +693,7 @@ test('select.select()', function (t) {
       sst.end()
     })
 
-    st.test(':has', function (sst) {
+    st.test(':has', (sst) => {
       sst.deepEqual(
         select('c:has(:first-child)', u('a', [u('b'), u('c', [u('d')])])),
         u('c', [u('d')]),

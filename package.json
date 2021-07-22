@@ -85,10 +85,7 @@
   "xo": {
     "prettier": true,
     "rules": {
-      "no-var": "off",
-      "prefer-arrow-callback": "off",
-      "max-params": "off",
-      "unicorn/no-array-for-each": "off"
+      "max-params": "off"
     }
   },
   "remarkConfig": {
