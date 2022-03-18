@@ -1,5 +1,7 @@
 /**
+ * @typedef {import('unist').Position} Position
  * @typedef {import('unist').Node} Node
+ * @typedef {Record<string, unknown> & {type: string, position?: Position|undefined}} NodeLike
  */
 
 import {any} from './lib/any.js'
@@ -7,7 +9,7 @@ import {parse} from './lib/parse.js'
 
 /**
  * @param {string} selector
- * @param {Node} [node]
+ * @param {NodeLike|Node} [node]
  * @returns {boolean}
  */
 export function matches(selector, node) {
@@ -16,7 +18,7 @@ export function matches(selector, node) {
 
 /**
  * @param {string} selector
- * @param {Node} [node]
+ * @param {NodeLike|Node} [node]
  * @returns {Node|null}
  */
 export function select(selector, node) {
@@ -25,8 +27,8 @@ export function select(selector, node) {
 
 /**
  * @param {string} selector
- * @param {Node} [node]
- * @returns {Array.<Node>}
+ * @param {NodeLike|Node} [node]
+ * @returns {Array<Node>}
  */
 export function selectAll(selector, node) {
   return any(parse(selector), node, {any})

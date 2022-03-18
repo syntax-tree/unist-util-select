@@ -7,6 +7,9 @@ import {u} from 'unist-builder'
 import {matches} from '../index.js'
 
 test('select.matches()', (t) => {
+  t.equal(matches('*', u('root', [])), true, 'should work (1)')
+  t.equal(matches('*', {type: 'a', children: []}), true, 'should work (2)')
+
   t.test('invalid selector', (st) => {
     st.throws(
       () => {
