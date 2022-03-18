@@ -1,5 +1,5 @@
 /**
- * @typedef {import('unist').Literal<string>} Literal
+ * @typedef {import('unist').Literal} Literal
  */
 
 import test from 'tape'
