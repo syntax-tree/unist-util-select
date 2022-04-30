@@ -84,5 +84,27 @@ test('all together now', (t) => {
     ]
   )
 
+  t.deepEqual(
+    selectAll(
+      'h1, h2',
+      u('root', [
+        u('h1', 'Alpha'),
+        u('h2', 'Alpha.1'),
+        u('h2', 'Alpha.2'),
+        u('h1', 'Bravo'),
+        u('h2', 'Bravo.1'),
+        u('h2', 'Bravo.2')
+      ])
+    ),
+    [
+      u('h1', 'Alpha'),
+      u('h2', 'Alpha.1'),
+      u('h2', 'Alpha.2'),
+      u('h1', 'Bravo'),
+      u('h2', 'Bravo.1'),
+      u('h2', 'Bravo.2')
+    ]
+  )
+
   t.end()
 })
