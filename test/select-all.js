@@ -1,10 +1,11 @@
-import test from 'tape'
+import assert from 'node:assert/strict'
+import test from 'node:test'
 import {u} from 'unist-builder'
 import {selectAll} from '../index.js'
 
-test('select.selectAll()', (t) => {
-  t.test('invalid selectors', (st) => {
-    st.throws(
+test('select.selectAll()', async (t) => {
+  await t.test('invalid selectors', () => {
+    assert.throws(
       () => {
         // @ts-expect-error runtime.
         selectAll()
@@ -13,7 +14,7 @@ test('select.selectAll()', (t) => {
       'should throw without selector'
     )
 
-    st.throws(
+    assert.throws(
       () => {
         // @ts-expect-error runtime.
         selectAll([], u('a'))
@@ -22,7 +23,7 @@ test('select.selectAll()', (t) => {
       'should throw w/ invalid selector (1)'
     )
 
-    st.throws(
+    assert.throws(
       () => {
         selectAll('@supports (transform-origin: 5% 5%) {}', u('a'))
       },
@@ -30,7 +31,7 @@ test('select.selectAll()', (t) => {
       'should throw w/ invalid selector (2)'
     )
 
-    st.throws(
+    assert.throws(
       () => {
         selectAll('[foo%=bar]', u('a'))
       },
@@ -38,7 +39,7 @@ test('select.selectAll()', (t) => {
       'should throw on invalid attribute operators'
     )
 
-    st.throws(
+    assert.throws(
       () => {
         selectAll(':active', u('a'))
       },
@@ -46,7 +47,7 @@ test('select.selectAll()', (t) => {
       'should throw on invalid pseudo classes'
     )
 
-    st.throws(
+    assert.throws(
       () => {
         selectAll(':nth-foo(2n+1)', u('a'))
       },
@@ -54,36 +55,36 @@ test('select.selectAll()', (t) => {
       'should throw on invalid pseudo class “functions”'
     )
 
-    st.throws(
+    assert.throws(
       () => {
         selectAll('::before', u('a'))
       },
       /Error: Unexpected pseudo-element or empty pseudo-class/,
       'should throw on invalid pseudo elements'
     )
-
-    st.end()
   })
 
-  t.test('general', (st) => {
-    st.deepEqual(
+  await t.test('general', () => {
+    assert.deepEqual(
       selectAll('', u('a')),
       [],
       'nothing for the empty string as selector'
     )
-    st.deepEqual(
+    assert.deepEqual(
       selectAll(' ', u('a')),
       [],
       'nothing for a white-space only selector'
     )
-    st.deepEqual(selectAll('*'), [], 'nothing if not given a node')
-    st.deepEqual(selectAll('*', u('a')), [u('a')], 'the node if given a node')
-
-    st.end()
+    assert.deepEqual(selectAll('*'), [], 'nothing if not given a node')
+    assert.deepEqual(
+      selectAll('*', u('a')),
+      [u('a')],
+      'the node if given a node'
+    )
   })
 
-  t.test('descendant selector', (st) => {
-    st.deepEqual(
+  await t.test('descendant selector', () => {
+    assert.deepEqual(
       selectAll(
         'b',
         u('a', [
@@ -95,13 +96,13 @@ test('select.selectAll()', (t) => {
       'should return descendant nodes'
     )
 
-    st.deepEqual(
+    assert.deepEqual(
       selectAll('a', u('a', 'Alpha')),
       [u('a', 'Alpha')],
       'should return the given node if it matches'
     )
 
-    st.deepEqual(
+    assert.deepEqual(
       selectAll(
         'b',
         u('a', [
@@ -117,23 +118,21 @@ test('select.selectAll()', (t) => {
       'should return matches with nested matches'
     )
 
-    st.deepEqual(
+    assert.deepEqual(
       selectAll('b c d', u('a', [u('b', [u('c', [u('d', [u('d')])])])])),
       [u('d', [u('d')]), u('d')],
       'should return deep matches'
     )
 
-    st.deepEqual(
+    assert.deepEqual(
       selectAll('b c', u('a', [u('b', [u('c', '1')]), u('d', [u('c', '2')])])),
       [u('c', '1')],
       'should not match outside other matches'
     )
-
-    st.end()
   })
 
-  t.test('child selector', (st) => {
-    st.deepEqual(
+  await t.test('child selector', () => {
+    assert.deepEqual(
       selectAll(
         'c > d',
         u('a', [
@@ -145,7 +144,7 @@ test('select.selectAll()', (t) => {
       'should return child nodes'
     )
 
-    st.deepEqual(
+    assert.deepEqual(
       selectAll(
         'b > b',
         u('a', [
@@ -156,17 +155,15 @@ test('select.selectAll()', (t) => {
       'should return matches with nested matches'
     )
 
-    st.deepEqual(
+    assert.deepEqual(
       selectAll('b > c > d', u('a', [u('b', [u('c', [u('d', [u('d')])])])])),
       [u('d', [u('d')])],
       'should return deep matches'
     )
-
-    st.end()
   })
 
-  t.test('adjacent sibling selector', (st) => {
-    st.deepEqual(
+  await t.test('adjacent sibling selector', () => {
+    assert.deepEqual(
       selectAll(
         'c + b',
         u('a', [
@@ -181,7 +178,7 @@ test('select.selectAll()', (t) => {
       'should return adjacent sibling'
     )
 
-    st.deepEqual(
+    assert.deepEqual(
       selectAll(
         'c + b',
         u('a', [
@@ -194,12 +191,10 @@ test('select.selectAll()', (t) => {
       [],
       'should return nothing without matches'
     )
-
-    st.end()
   })
 
-  t.test('general sibling selector', (st) => {
-    st.deepEqual(
+  await t.test('general sibling selector', () => {
+    assert.deepEqual(
       selectAll(
         'c ~ b',
         u('a', [
@@ -214,7 +209,7 @@ test('select.selectAll()', (t) => {
       'should return adjacent sibling'
     )
 
-    st.deepEqual(
+    assert.deepEqual(
       selectAll(
         'c ~ b',
         u('a', [
@@ -228,7 +223,7 @@ test('select.selectAll()', (t) => {
       'should return future siblings'
     )
 
-    st.deepEqual(
+    assert.deepEqual(
       selectAll(
         'c ~ b',
         u('a', [u('b', 'Alpha'), u('c', 'Bravo'), u('d', 'Charlie')])
@@ -236,13 +231,11 @@ test('select.selectAll()', (t) => {
       [],
       'should return nothing without matches'
     )
-
-    st.end()
   })
 
-  t.test('parent-sensitive pseudo-selectors', (st) => {
-    st.test(':first-child', (sst) => {
-      sst.deepEqual(
+  await t.test('parent-sensitive pseudo-selectors', async (t) => {
+    await t.test(':first-child', () => {
+      assert.deepEqual(
         selectAll(
           ':first-child',
           u('a', [
@@ -257,7 +250,7 @@ test('select.selectAll()', (t) => {
         'should return all `:first-child`s (1)'
       )
 
-      sst.deepEqual(
+      assert.deepEqual(
         selectAll(
           'b:first-child',
           u('a', [u('b', 'Alpha'), u('c', 'Bravo'), u('b', 'Charlie')])
@@ -266,7 +259,7 @@ test('select.selectAll()', (t) => {
         'should return all `:first-child`s (2)'
       )
 
-      sst.deepEqual(
+      assert.deepEqual(
         selectAll(
           'h1:first-child',
           u('a', [u('b', 'Alpha'), u('c', 'Bravo'), u('b', 'Charlie')])
@@ -274,12 +267,10 @@ test('select.selectAll()', (t) => {
         [],
         'should return nothing if nothing matches'
       )
-
-      sst.end()
     })
 
-    st.test(':last-child', (sst) => {
-      sst.deepEqual(
+    await t.test(':last-child', () => {
+      assert.deepEqual(
         selectAll(
           ':last-child',
           u('a', [
@@ -294,7 +285,7 @@ test('select.selectAll()', (t) => {
         'should return all `:last-child`s (1)'
       )
 
-      sst.deepEqual(
+      assert.deepEqual(
         selectAll(
           'b:last-child',
           u('a', [u('b', 'Alpha'), u('c', 'Bravo'), u('b', 'Charlie')])
@@ -303,7 +294,7 @@ test('select.selectAll()', (t) => {
         'should return all `:last-child`s (2)'
       )
 
-      sst.deepEqual(
+      assert.deepEqual(
         selectAll(
           'h1:last-child',
           u('a', [u('b', 'Alpha'), u('c', 'Bravo'), u('b', 'Charlie')])
@@ -311,12 +302,10 @@ test('select.selectAll()', (t) => {
         [],
         'should return nothing if nothing matches'
       )
-
-      sst.end()
     })
 
-    st.test(':only-child', (sst) => {
-      sst.deepEqual(
+    await t.test(':only-child', () => {
+      assert.deepEqual(
         selectAll(
           ':only-child',
           u('a', [
@@ -331,7 +320,7 @@ test('select.selectAll()', (t) => {
         'should return all `:only-child`s'
       )
 
-      sst.deepEqual(
+      assert.deepEqual(
         selectAll(
           'c:only-child',
           u('a', [u('b', 'Alpha'), u('c', 'Bravo'), u('b', 'Charlie')])
@@ -339,12 +328,10 @@ test('select.selectAll()', (t) => {
         [],
         'should return nothing if nothing matches'
       )
-
-      sst.end()
     })
 
-    st.test(':nth-child', (sst) => {
-      sst.deepEqual(
+    await t.test(':nth-child', () => {
+      assert.deepEqual(
         selectAll(
           'b:nth-child(odd)',
           u('a', [
@@ -360,7 +347,7 @@ test('select.selectAll()', (t) => {
         'should return all `:nth-child(odd)`s'
       )
 
-      sst.deepEqual(
+      assert.deepEqual(
         selectAll(
           'b:nth-child(2n+1)',
           u('a', [
@@ -376,7 +363,7 @@ test('select.selectAll()', (t) => {
         'should return all `:nth-child(2n+1)`s'
       )
 
-      sst.deepEqual(
+      assert.deepEqual(
         selectAll(
           'b:nth-child(even)',
           u('a', [
@@ -392,7 +379,7 @@ test('select.selectAll()', (t) => {
         'should return all `:nth-child(even)`s'
       )
 
-      sst.deepEqual(
+      assert.deepEqual(
         selectAll(
           'b:nth-child(2n+0)',
           u('a', [
@@ -407,12 +394,10 @@ test('select.selectAll()', (t) => {
         [u('b', 'Bravo'), u('b', 'Delta'), u('b', 'Foxtrot')],
         'should return all `:nth-child(2n+0)`s'
       )
-
-      sst.end()
     })
 
-    st.test(':nth-last-child', (sst) => {
-      sst.deepEqual(
+    await t.test(':nth-last-child', () => {
+      assert.deepEqual(
         selectAll(
           'b:nth-last-child(odd)',
           u('a', [
@@ -428,7 +413,7 @@ test('select.selectAll()', (t) => {
         'should return all `:nth-last-child(odd)`s'
       )
 
-      sst.deepEqual(
+      assert.deepEqual(
         selectAll(
           'b:nth-last-child(2n+1)',
           u('a', [
@@ -444,7 +429,7 @@ test('select.selectAll()', (t) => {
         'should return all `:nth-last-child(2n+1)`s'
       )
 
-      sst.deepEqual(
+      assert.deepEqual(
         selectAll(
           'b:nth-last-child(even)',
           u('a', [
@@ -460,7 +445,7 @@ test('select.selectAll()', (t) => {
         'should return all `:nth-last-child(even)`s'
       )
 
-      sst.deepEqual(
+      assert.deepEqual(
         selectAll(
           'b:nth-last-child(2n+0)',
           u('a', [
@@ -475,12 +460,10 @@ test('select.selectAll()', (t) => {
         [u('b', 'Alpha'), u('b', 'Charlie'), u('b', 'Echo')],
         'should return all `:nth-last-child(2n+0)`s'
       )
-
-      sst.end()
     })
 
-    st.test(':nth-of-type', (sst) => {
-      sst.deepEqual(
+    await t.test(':nth-of-type', () => {
+      assert.deepEqual(
         selectAll(
           'b:nth-of-type(odd)',
           u('a', [
@@ -496,7 +479,7 @@ test('select.selectAll()', (t) => {
         'should return all `:nth-of-type(odd)`s'
       )
 
-      sst.deepEqual(
+      assert.deepEqual(
         selectAll(
           'b:nth-of-type(2n+1)',
           u('a', [
@@ -512,7 +495,7 @@ test('select.selectAll()', (t) => {
         'should return all `:nth-of-type(2n+1)`s'
       )
 
-      sst.deepEqual(
+      assert.deepEqual(
         selectAll(
           'b:nth-of-type(even)',
           u('a', [
@@ -528,7 +511,7 @@ test('select.selectAll()', (t) => {
         'should return all `:nth-of-type(even)`s'
       )
 
-      sst.deepEqual(
+      assert.deepEqual(
         selectAll(
           'b:nth-of-type(2n+0)',
           u('a', [
@@ -543,12 +526,10 @@ test('select.selectAll()', (t) => {
         [u('b', 'Charlie')],
         'should return all `:nth-of-type(2n+0)`s'
       )
-
-      sst.end()
     })
 
-    st.test(':nth-last-of-type', (sst) => {
-      sst.deepEqual(
+    await t.test(':nth-last-of-type', () => {
+      assert.deepEqual(
         selectAll(
           'b:nth-last-of-type(odd)',
           u('a', [
@@ -564,7 +545,7 @@ test('select.selectAll()', (t) => {
         'should return all `:nth-last-of-type(odd)`s'
       )
 
-      sst.deepEqual(
+      assert.deepEqual(
         selectAll(
           'b:nth-last-of-type(2n+1)',
           u('a', [
@@ -580,7 +561,7 @@ test('select.selectAll()', (t) => {
         'should return all `:nth-last-of-type(2n+1)`s'
       )
 
-      sst.deepEqual(
+      assert.deepEqual(
         selectAll(
           'b:nth-last-of-type(even)',
           u('a', [
@@ -596,7 +577,7 @@ test('select.selectAll()', (t) => {
         'should return all `:nth-last-of-type(even)`s'
       )
 
-      sst.deepEqual(
+      assert.deepEqual(
         selectAll(
           'b:nth-last-of-type(2n+0)',
           u('a', [
@@ -611,12 +592,10 @@ test('select.selectAll()', (t) => {
         [u('b', 'Charlie')],
         'should return all `:nth-last-of-type(2n+0)`s'
       )
-
-      sst.end()
     })
 
-    st.test(':first-of-type', (sst) => {
-      sst.deepEqual(
+    await t.test(':first-of-type', () => {
+      assert.deepEqual(
         selectAll(
           'b:first-of-type',
           u('a', [
@@ -632,17 +611,15 @@ test('select.selectAll()', (t) => {
         'should return all `:first-of-type`s'
       )
 
-      sst.deepEqual(
+      assert.deepEqual(
         selectAll('b:first-of-type', u('a', [])),
         [],
         'should return nothing without matches'
       )
-
-      sst.end()
     })
 
-    st.test(':last-of-type', (sst) => {
-      sst.deepEqual(
+    await t.test(':last-of-type', () => {
+      assert.deepEqual(
         selectAll(
           'b:last-of-type',
           u('a', [
@@ -658,17 +635,15 @@ test('select.selectAll()', (t) => {
         'should return all `:last-of-type`s'
       )
 
-      sst.deepEqual(
+      assert.deepEqual(
         selectAll('b:last-of-type', u('a', [])),
         [],
         'should return nothing without matches'
       )
-
-      sst.end()
     })
 
-    st.test(':only-of-type', (sst) => {
-      sst.deepEqual(
+    await t.test(':only-of-type', () => {
+      assert.deepEqual(
         selectAll(
           'c:only-of-type',
           u('a', [
@@ -682,7 +657,7 @@ test('select.selectAll()', (t) => {
         'should return the only type'
       )
 
-      sst.deepEqual(
+      assert.deepEqual(
         selectAll(
           'b:only-of-type',
           u('a', [
@@ -698,77 +673,59 @@ test('select.selectAll()', (t) => {
         'should return nothing with too many matches'
       )
 
-      sst.deepEqual(
+      assert.deepEqual(
         selectAll('b:only-of-type', u('a', [])),
         [],
         'should return nothing without matches'
       )
-
-      sst.end()
     })
 
-    st.test(':root', (sst) => {
-      sst.deepEqual(
+    await t.test(':root', () => {
+      assert.deepEqual(
         selectAll(':root', u('a', [u('b'), u('c', [u('d')])])),
         [u('a', [u('b'), u('c', [u('d')])])],
         'should return the given node'
       )
-
-      sst.end()
     })
 
-    st.test(':scope', (sst) => {
-      sst.deepEqual(
+    await t.test(':scope', () => {
+      assert.deepEqual(
         selectAll(':scope', u('a', [u('b'), u('c', [u('d')])])),
         [u('a', [u('b'), u('c', [u('d')])])],
         'should return the given node'
       )
-
-      sst.end()
     })
 
-    st.test(':has', (sst) => {
-      sst.deepEqual(
+    await t.test(':has', () => {
+      assert.deepEqual(
         selectAll('c:has(:first-child)', u('a', [u('b'), u('c', [u('d')])])),
         [u('c', [u('d')])],
         'should select a node'
       )
-
-      sst.end()
     })
-
-    st.end()
   })
 
-  t.test(':any', (t) => {
-    t.deepEqual(
+  await t.test(':any', () => {
+    assert.deepEqual(
       selectAll('y:any(:first-child)', u('x', [u('y', 'a'), u('y', 'b')])),
       [u('y', 'a')],
       'should support parent-sensitive `:any`'
     )
-
-    t.end()
   })
 
-  t.test(':matches', (t) => {
-    t.deepEqual(
+  await t.test(':matches', () => {
+    assert.deepEqual(
       selectAll('y:matches(:first-child)', u('x', [u('y', 'a'), u('y', 'b')])),
       [u('y', 'a')],
       'should support parent-sensitive `:matches`'
     )
-
-    t.end()
   })
 
-  t.test(':not', (t) => {
-    t.deepEqual(
+  await t.test(':not', () => {
+    assert.deepEqual(
       selectAll('y:not(:first-child)', u('x', [u('y', 'a'), u('y', 'b')])),
       [u('y', 'b')],
       'should support parent-sensitive `:not`'
     )
-
-    t.end()
   })
-
-  t.end()
 })
