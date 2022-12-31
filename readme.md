@@ -8,29 +8,100 @@
 [![Backers][backers-badge]][collective]
 [![Chat][chat-badge]][chat]
 
-[**unist**][unist] utility with equivalents for `querySelector`,
-`querySelectorAll`, and `matches`.
+[unist][] utility with equivalents for `querySelector`, `querySelectorAll`,
+and `matches`.
 
-Note that the DOM has references to their parent nodes, meaning that
-`document.body.matches(':last-child')` can be evaluated.
-This information is not stored in unist, so selectors like that don’t work.
+## Contents
 
-[View the list of supported selectors »][support]
+*   [What is this?](#what-is-this)
+*   [When should I use this?](#when-should-i-use-this)
+*   [Install](#install)
+*   [Use](#use)
+*   [API](#api)
+    *   [`matches(selector, node)`](#matchesselector-node)
+    *   [`select(selector, tree)`](#selectselector-tree)
+    *   [`selectAll(selector, tree)`](#selectallselector-tree)
+*   [Support](#support)
+*   [Types](#types)
+*   [Compatibility](#compatibility)
+*   [Related](#related)
+*   [Contribute](#contribute)
+*   [License](#license)
+
+## What is this?
+
+This package lets you find nodes in a tree, similar to how `querySelector`,
+`querySelectorAll`, and `matches` work with the DOM.
+
+One notable difference between DOM and hast is that DOM nodes have references
+to their parents, meaning that `document.body.matches(':last-child')` can
+be evaluated to check whether the body is the last child of its parent.
+This information is not stored in hast, so selectors like that don’t work.
+
+## When should I use this?
+
+This utility works on any unist syntax tree and you can select all node types.
+If you are working with [hast][], and only want to select elements, use
+[`hast-util-select`][hast-util-select] instead.
+
+This is a small utility that is quite useful, but is rather slow if you use it a
+lot.
+For each call, it has to walk the entire tree.
+In some cases, walking the tree once with [`unist-util-visit`][unist-util-visit]
+is smarter, such as when you want to change certain nodes.
+On the other hand, this is quite powerful and fast enough for many other cases.
 
 ## Install
 
-This package is [ESM only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c):
-Node 12+ is needed to use it and it must be `import`ed instead of `require`d.
-
-[npm][]:
+This package is [ESM only][esm].
+In Node.js (version 14.14+, 16.0+), install with [npm][]:
 
 ```sh
 npm install unist-util-select
 ```
 
+In Deno with [`esm.sh`][esmsh]:
+
+```js
+import {matches, select, selectAll} from "https://esm.sh/unist-util-select@4"
+```
+
+In browsers with [`esm.sh`][esmsh]:
+
+```html
+<script type="module">
+  import {matches, select, selectAll} from "https://esm.sh/unist-util-select@4?bundle"
+</script>
+```
+
+## Use
+
+```js
+import {u} from 'unist-builder'
+import {matches, select, selectAll} from 'unist-util-select'
+
+const tree = u('blockquote', [
+  u('paragraph', [u('text', 'Alpha')]),
+  u('paragraph', [u('text', 'Bravo')]),
+  u('code', 'Charlie'),
+  u('paragraph', [u('text', 'Delta')]),
+  u('paragraph', [u('text', 'Echo')]),
+  u('paragraph', [u('text', 'Foxtrot')]),
+  u('paragraph', [u('text', 'Golf')])
+])
+
+matches('blockquote, list', tree) // => true
+
+console.log(select('code ~ :nth-child(even)', tree))
+// The paragraph with `Delta`
+
+console.log(selectAll('code ~ :nth-child(even)', tree))
+// The paragraphs with `Delta` and `Foxtrot`
+```
+
 ## API
 
-This package exports the following identifiers: `matches`, `select`, `selectAll`.
+This package exports the identifiers `matches`, `select`, and `selectAll`.
 There is no default export.
 
 ### `matches(selector, node)`
@@ -199,33 +270,35 @@ Yields:
 
 ###### Notes
 
-*   \* — Not supported in `matches`
+*   \* — not supported in `matches`
+
+## Types
+
+This package is fully typed with [TypeScript][].
+It exports no additional types.
+
+## Compatibility
+
+Projects maintained by the unified collective are compatible with all maintained
+versions of Node.js.
+As of now, that is Node.js 14.14+ and 16.0+.
+Our projects sometimes work with older versions, but this is not guaranteed.
 
 ## Related
 
-*   [`unist-util-filter`](https://github.com/syntax-tree/unist-util-filter)
-    — Create a new tree with all nodes that pass a test
-*   [`unist-util-map`](https://github.com/syntax-tree/unist-util-map)
-    — Create a new tree with all nodes mapped by a given function
-*   [`unist-util-flatmap`](https://gitlab.com/staltz/unist-util-flatmap)
-    — Create a new tree by mapping (to an array) with the given function
 *   [`unist-util-is`](https://github.com/syntax-tree/unist-util-is)
-    — Check if a node passes a test
-*   [`unist-util-remove`](https://github.com/syntax-tree/unist-util-remove)
-    — Remove nodes from trees
-*   [`unist-util-remove-position`](https://github.com/syntax-tree/unist-util-remove-position)
-    — Remove positional info from trees
+    — check if a node passes a test
 *   [`unist-util-visit`](https://github.com/syntax-tree/unist-util-visit)
-    — Recursively walk over nodes
+    — recursively walk over nodes
 *   [`unist-util-visit-parents`](https://github.com/syntax-tree/unist-util-visit-parents)
-    — Like `visit`, but with a stack of parents
+    — like `visit`, but with a stack of parents
 *   [`unist-builder`](https://github.com/syntax-tree/unist-builder)
-    — Helper for creating trees
+    — create unist trees
 
 ## Contribute
 
-See [`contributing.md` in `syntax-tree/.github`][contributing] for ways to get
-started.
+See [`contributing.md`][contributing] in [`syntax-tree/.github`][health] for
+ways to get started.
 See [`support.md`][help] for ways to get help.
 
 This project has a [code of conduct][coc].
@@ -266,18 +339,30 @@ abide by its terms.
 
 [npm]: https://docs.npmjs.com/cli/install
 
+[esm]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
+
+[esmsh]: https://esm.sh
+
+[typescript]: https://www.typescriptlang.org
+
 [license]: license
 
-[contributing]: https://github.com/syntax-tree/.github/blob/HEAD/contributing.md
+[health]: https://github.com/syntax-tree/.github
 
-[help]: https://github.com/syntax-tree/.github/blob/HEAD/support.md
+[contributing]: https://github.com/syntax-tree/.github/blob/main/contributing.md
 
-[coc]: https://github.com/syntax-tree/.github/blob/HEAD/code-of-conduct.md
+[help]: https://github.com/syntax-tree/.github/blob/main/support.md
 
-[preorder]: https://github.com/syntax-tree/unist#preorder
+[coc]: https://github.com/syntax-tree/.github/blob/main/code-of-conduct.md
 
 [unist]: https://github.com/syntax-tree/unist
 
 [node]: https://github.com/syntax-tree/unist#node
 
-[support]: #support
+[preorder]: https://github.com/syntax-tree/unist#preorder
+
+[unist-util-visit]: https://github.com/syntax-tree/unist-util-visit
+
+[hast]: https://github.com/syntax-tree/hast
+
+[hast-util-select]: https://github.com/syntax-tree/hast-util-select
