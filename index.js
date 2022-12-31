@@ -1,11 +1,13 @@
 /**
  * @typedef {import('unist').Position} Position
  * @typedef {import('unist').Node} Node
- * @typedef {Record<string, unknown> & {type: string, position?: Position|undefined}} NodeLike
+ * @typedef {import('./lib/types.js').SelectState} SelectState
+ * @typedef {Record<string, unknown> & {type: string, position?: Position | undefined}} NodeLike
  */
 
 import {any} from './lib/any.js'
 import {parse} from './lib/parse.js'
+import {root} from './lib/util.js'
 
 /**
  * Check that the given `node` matches `selector`.
@@ -17,13 +19,17 @@ import {parse} from './lib/parse.js'
  *
  * @param {string} selector
  *   CSS selector, such as (`heading`, `link, linkReference`).
- * @param {Node | NodeLike | undefined} [node]
+ * @param {Node | NodeLike | null | undefined} [node]
  *   Node that might match `selector`.
  * @returns {boolean}
  *   Whether `node` matches `selector`.
  */
 export function matches(selector, node) {
-  return Boolean(any(parse(selector), node, {one: true, shallow: true, any})[0])
+  const state = createState(node)
+  state.one = true
+  state.shallow = true
+  const result = any(parse(selector), node || undefined, state)
+  return result.length > 0
 }
 
 /**
@@ -33,7 +39,7 @@ export function matches(selector, node) {
  *
  * @param {string} selector
  *   CSS selector, such as (`heading`, `link, linkReference`).
- * @param {Node | NodeLike | undefined} [tree]
+ * @param {Node | NodeLike | null | undefined} [tree]
  *   Tree to search.
  * @returns {Node | null}
  *   First node in `tree` that matches `selector` or `null` if nothing is
@@ -42,7 +48,11 @@ export function matches(selector, node) {
  *   This could be `tree` itself.
  */
 export function select(selector, tree) {
-  return any(parse(selector), tree, {one: true, any})[0] || null
+  const state = createState(tree)
+  state.one = true
+  const result = any(parse(selector), tree || undefined, state)
+  // To do next major: return `undefined`.
+  return result[0] || null
 }
 
 /**
@@ -52,7 +62,7 @@ export function select(selector, tree) {
  *
  * @param {string} selector
  *   CSS selector, such as (`heading`, `link, linkReference`).
- * @param {Node | NodeLike | undefined} [tree]
+ * @param {Node | NodeLike | null | undefined} [tree]
  *   Tree to search.
  * @returns {Array<Node>}
  *   Nodes in `tree` that match `selector`.
@@ -60,5 +70,26 @@ export function select(selector, tree) {
  *   This could include `tree` itself.
  */
 export function selectAll(selector, tree) {
-  return any(parse(selector), tree, {any})
+  const state = createState(tree)
+  return any(parse(selector), tree || undefined, state)
+}
+
+/**
+ * @param {Node | null | undefined} tree
+ * @returns {SelectState}
+ */
+function createState(tree) {
+  return {
+    any,
+    iterator: undefined,
+    scopeNodes: tree ? (root(tree) ? tree.children : [tree]) : [],
+    one: false,
+    shallow: false,
+    index: false,
+    found: false,
+    typeIndex: undefined,
+    nodeIndex: undefined,
+    typeCount: undefined,
+    nodeCount: undefined
+  }
 }
