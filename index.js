@@ -28,8 +28,8 @@ export function matches(selector, node) {
   const state = createState(node)
   state.one = true
   state.shallow = true
-  const result = any(parse(selector), node || undefined, state)
-  return result.length > 0
+  any(parse(selector), node || undefined, state)
+  return state.results.length > 0
 }
 
 /**
@@ -50,9 +50,9 @@ export function matches(selector, node) {
 export function select(selector, tree) {
   const state = createState(tree)
   state.one = true
-  const result = any(parse(selector), tree || undefined, state)
+  any(parse(selector), tree || undefined, state)
   // To do next major: return `undefined`.
-  return result[0] || null
+  return state.results[0] || null
 }
 
 /**
@@ -71,7 +71,8 @@ export function select(selector, tree) {
  */
 export function selectAll(selector, tree) {
   const state = createState(tree)
-  return any(parse(selector), tree || undefined, state)
+  any(parse(selector), tree || undefined, state)
+  return state.results
 }
 
 /**
@@ -80,6 +81,7 @@ export function selectAll(selector, tree) {
  */
 function createState(tree) {
   return {
+    results: [],
     any,
     iterator: undefined,
     scopeNodes: tree ? (root(tree) ? tree.children : [tree]) : [],
