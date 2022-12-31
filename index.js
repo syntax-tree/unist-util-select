@@ -5,7 +5,7 @@
  * @typedef {Record<string, unknown> & {type: string, position?: Position | undefined}} NodeLike
  */
 
-import {any} from './lib/any.js'
+import {queryToSelectors, walk} from './lib/walk.js'
 import {parse} from './lib/parse.js'
 import {parent} from './lib/util.js'
 
@@ -25,10 +25,10 @@ import {parent} from './lib/util.js'
  *   Whether `node` matches `selector`.
  */
 export function matches(selector, node) {
-  const state = createState(node)
+  const state = createState(selector, node)
   state.one = true
   state.shallow = true
-  any(parse(selector), node || undefined, state)
+  walk(state, node || undefined)
   return state.results.length > 0
 }
 
@@ -48,9 +48,9 @@ export function matches(selector, node) {
  *   This could be `tree` itself.
  */
 export function select(selector, tree) {
-  const state = createState(tree)
+  const state = createState(selector, tree)
   state.one = true
-  any(parse(selector), tree || undefined, state)
+  walk(state, tree || undefined)
   // To do next major: return `undefined`.
   return state.results[0] || null
 }
@@ -70,20 +70,23 @@ export function select(selector, tree) {
  *   This could include `tree` itself.
  */
 export function selectAll(selector, tree) {
-  const state = createState(tree)
-  any(parse(selector), tree || undefined, state)
+  const state = createState(selector, tree)
+  walk(state, tree || undefined)
   return state.results
 }
 
 /**
+ * @param {string} selector
+ *   Selector to parse.
  * @param {Node | null | undefined} tree
+ *   Tree to search.
  * @returns {SelectState}
  */
-function createState(tree) {
+function createState(selector, tree) {
   return {
+    // State of the query.
+    rootQuery: queryToSelectors(parse(selector)),
     results: [],
-    any,
-    iterator: undefined,
     scopeNodes: tree
       ? parent(tree) &&
         // Root in nlcst.
@@ -93,8 +96,8 @@ function createState(tree) {
       : [],
     one: false,
     shallow: false,
-    index: false,
     found: false,
+    // State in the tree.
     typeIndex: undefined,
     nodeIndex: undefined,
     typeCount: undefined,

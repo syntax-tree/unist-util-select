@@ -76,12 +76,12 @@ test('all together now', () => {
       ])
     ),
     [
+      u('b', {e: 3}, 'Alpha'),
       u('b', {d: 1}, 'Charlie'),
-      u('c', {d: 2, e: 4}, 'Foxtrot'),
       u('c', 'Delta'),
+      u('c', {d: 2, e: 4}, 'Foxtrot'),
       u('b', 'Golf'),
-      u('c', 'Hotel'),
-      u('b', {e: 3}, 'Alpha')
+      u('c', 'Hotel')
     ]
   )
 })
