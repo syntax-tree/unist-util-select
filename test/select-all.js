@@ -740,5 +740,35 @@ test('select.selectAll()', (t) => {
     st.end()
   })
 
+  t.test(':any', (t) => {
+    t.deepEqual(
+      selectAll('y:any(:first-child)', u('x', [u('y', 'a'), u('y', 'b')])),
+      [u('y', 'a')],
+      'should support parent-sensitive `:any`'
+    )
+
+    t.end()
+  })
+
+  t.test(':matches', (t) => {
+    t.deepEqual(
+      selectAll('y:matches(:first-child)', u('x', [u('y', 'a'), u('y', 'b')])),
+      [u('y', 'a')],
+      'should support parent-sensitive `:matches`'
+    )
+
+    t.end()
+  })
+
+  t.test(':not', (t) => {
+    t.deepEqual(
+      selectAll('y:not(:first-child)', u('x', [u('y', 'a'), u('y', 'b')])),
+      [u('y', 'b')],
+      'should support parent-sensitive `:not`'
+    )
+
+    t.end()
+  })
+
   t.end()
 })
