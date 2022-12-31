@@ -35,13 +35,25 @@ There is no default export.
 
 ### `matches(selector, node)`
 
-Check that the given [node][] matches `selector`.
-Returns `boolean`, whether the node matches or not.
+Check that the given `node` matches `selector`.
 
-This only checks the element itself, not the surrounding tree.
+This only checks the node itself, not the surrounding tree.
 Thus, nesting in selectors is not supported (`paragraph strong`,
-`paragraph > strong`), nor are selectors like `:first-child`, etc.
-This only checks that the given element matches the selector.
+`paragraph > strong`), neither are selectors like `:first-child`, etc.
+This only checks that the given node matches the selector.
+
+###### Parameters
+
+*   `selector` (`string`)
+    — CSS selector, such as (`heading`, `link, linkReference`).
+*   `node` ([`Node`][node], optional)
+    — node that might match `selector`
+
+###### Returns
+
+Whether `node` matches `selector` (`boolean`).
+
+###### Example
 
 ```js
 import {u} from 'unist-builder'
@@ -53,9 +65,24 @@ matches('[lang]', u('code', {lang: 'js'}, 'console.log(1)')) // => true
 
 ### `select(selector, tree)`
 
-Select the first node matching `selector` in the given `tree` (could be the
-tree itself).
-Returns the found [node][], if any.
+Select the first node that matches `selector` in the given `tree`.
+
+Searches the tree in *[preorder][]*.
+
+###### Parameters
+
+*   `selector` (`string`)
+    — CSS selector, such as (`heading`, `link, linkReference`).
+*   `tree` ([`Node`][node], optional)
+    — tree to search
+
+###### Returns
+
+First node in `tree` that matches `selector` or `null` if nothing is found.
+
+This could be `tree` itself.
+
+###### Example
 
 ```js
 import {u} from 'unist-builder'
@@ -83,9 +110,24 @@ Yields:
 
 ### `selectAll(selector, tree)`
 
-Select all nodes matching `selector` in the given `tree` (could include the
-tree itself).
-Returns all found [node][]s, if any.
+Select all nodes that match `selector` in the given `tree`.
+
+Searches the tree in *[preorder][]*.
+
+###### Parameters
+
+*   `selector` (`string`)
+    — CSS selector, such as (`heading`, `link, linkReference`).
+*   `tree` ([`Node`][node], optional)
+    — tree to search
+
+###### Returns
+
+Nodes in `tree` that match `selector`.
+
+This could include `tree` itself.
+
+###### Example
 
 ```js
 import {u} from 'unist-builder'
@@ -231,6 +273,8 @@ abide by its terms.
 [help]: https://github.com/syntax-tree/.github/blob/HEAD/support.md
 
 [coc]: https://github.com/syntax-tree/.github/blob/HEAD/code-of-conduct.md
+
+[preorder]: https://github.com/syntax-tree/unist#preorder
 
 [unist]: https://github.com/syntax-tree/unist
 
