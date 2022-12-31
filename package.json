@@ -51,7 +51,6 @@
     "@types/unist": "^2.0.0",
     "css-selector-parser": "^1.0.0",
     "nth-check": "^2.0.0",
-    "unist-util-is": "^5.0.0",
     "zwitch": "^2.0.0"
   },
   "devDependencies": {

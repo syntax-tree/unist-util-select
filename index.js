@@ -7,7 +7,7 @@
 
 import {any} from './lib/any.js'
 import {parse} from './lib/parse.js'
-import {root} from './lib/util.js'
+import {parent} from './lib/util.js'
 
 /**
  * Check that the given `node` matches `selector`.
@@ -84,7 +84,13 @@ function createState(tree) {
     results: [],
     any,
     iterator: undefined,
-    scopeNodes: tree ? (root(tree) ? tree.children : [tree]) : [],
+    scopeNodes: tree
+      ? parent(tree) &&
+        // Root in nlcst.
+        (tree.type === 'RootNode' || tree.type === 'root')
+        ? tree.children
+        : [tree]
+      : [],
     one: false,
     shallow: false,
     index: false,
