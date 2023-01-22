@@ -84,4 +84,17 @@ test('all together now', () => {
       u('c', 'Hotel')
     ]
   )
+
+  assert.deepEqual(
+    selectAll(
+      'a:not([b])',
+      u('root', [
+        u('a', {id: 'w', b: 'a'}),
+        u('a', {id: 'x'}),
+        u('a', {id: 'y', b: 'a'}),
+        u('a', {id: 'z'})
+      ])
+    ),
+    [u('a', {id: 'x'}), u('a', {id: 'z'})]
+  )
 })
