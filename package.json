@@ -99,6 +99,8 @@
           "test/**/*.js"
         ],
         "rules": {
+          "import/no-unassigned-import": "off",
+          "max-nested-callbacks": "off",
           "no-await-in-loop": "off"
         }
       }

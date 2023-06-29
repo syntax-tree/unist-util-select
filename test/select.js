@@ -3,227 +3,164 @@ import test from 'node:test'
 import {u} from 'unist-builder'
 import {select} from '../index.js'
 
-test('select.select()', async (t) => {
-  await t.test('invalid selectors', () => {
-    assert.throws(
-      () => {
-        // @ts-expect-error runtime.
+test('select.select()', async function (t) {
+  await t.test('invalid selectors', async function (t) {
+    await t.test('should throw without selector', async function () {
+      assert.throws(function () {
+        // @ts-expect-error check that a runtime error is thrown.
         select()
-      },
-      /Error: Expected `string` as selector, not `undefined`/,
-      'should throw without selector'
-    )
+      }, /Error: Expected `string` as selector, not `undefined`/)
+    })
 
-    assert.throws(
-      () => {
-        // @ts-expect-error runtime.
+    await t.test('should throw w/ invalid selector (1)', async function () {
+      assert.throws(function () {
+        // @ts-expect-error check that a runtime error is thrown.
         select([], u('a'))
-      },
-      /Error: Expected `string` as selector, not ``/,
-      'should throw w/ invalid selector (1)'
-    )
+      }, /Error: Expected `string` as selector, not ``/)
+    })
 
-    assert.throws(
-      () => {
+    await t.test('should throw w/ invalid selector (2)', async function () {
+      assert.throws(function () {
         select('@supports (transform-origin: 5% 5%) {}', u('a'))
-      },
-      /Expected rule but "@" found/,
-      'should throw w/ invalid selector (2)'
+      }, /Expected rule but "@" found/)
+    })
+
+    await t.test(
+      'should throw on invalid attribute operators',
+      async function () {
+        assert.throws(function () {
+          select('[foo%=bar]', u('a'))
+        }, /Expected a valid attribute selector operator/)
+      }
     )
 
-    assert.throws(
-      () => {
-        select('[foo%=bar]', u('a'))
-      },
-      /Expected a valid attribute selector operator/,
-      'should throw on invalid attribute operators'
-    )
-
-    assert.throws(
-      () => {
+    await t.test('should throw on invalid pseudo classes', async function () {
+      assert.throws(function () {
         select(':active', u('a'))
-      },
-      /Error: Unknown pseudo-selector `active`/,
-      'should throw on invalid pseudo classes'
+      }, /Error: Unknown pseudo-selector `active`/)
+    })
+
+    await t.test(
+      'should throw on invalid pseudo class “functions”',
+      async function () {
+        assert.throws(function () {
+          select(':nth-foo(2n+1)', u('a'))
+        }, /Unknown pseudo-class/)
+      }
     )
 
-    assert.throws(
-      () => {
-        select(':nth-foo(2n+1)', u('a'))
-      },
-      /Unknown pseudo-class/,
-      'should throw on invalid pseudo class “functions”'
-    )
-
-    assert.throws(
-      () => {
+    await t.test('should throw on invalid pseudo elements', async function () {
+      assert.throws(function () {
         select('::before', u('a'))
-      },
-      /Invalid selector: `::before`/,
-      'should throw on invalid pseudo elements'
-    )
+      }, /Invalid selector: `::before`/)
+    })
   })
 
-  await t.test('general', () => {
-    assert.throws(
-      () => {
-        select('', u('a'))
-      },
-      /Expected rule but end of input reached/,
-      'should throw for the empty string as selector'
+  await t.test('general', async function (t) {
+    await t.test(
+      'should throw for the empty string as selector',
+      async function () {
+        assert.throws(function () {
+          select('', u('a'))
+        }, /Expected rule but end of input reached/)
+      }
     )
 
-    assert.throws(
-      () => {
-        select(' ', u('a'))
-      },
-      /Expected rule but end of input reached/,
-      'should throw for a white-space only selector'
+    await t.test(
+      'should throw for a white-space only selector',
+      async function () {
+        assert.throws(function () {
+          select(' ', u('a'))
+        }, /Expected rule but end of input reached/)
+      }
     )
 
-    assert.equal(select('*'), null, 'nothing if not given a node')
+    await t.test('should yield nothing if not given a node', async function () {
+      assert.equal(select('*'), null)
+    })
 
-    assert.deepEqual(select('*', u('a')), u('a'), 'the node if given a node')
+    await t.test('should yield the node if given a node', async function () {
+      assert.deepEqual(select('*', u('a')), u('a'))
+    })
   })
 
-  await t.test('descendant selector', () => {
-    assert.deepEqual(
-      select(
-        'b',
-        u('a', [
-          u('b', {x: 1}),
-          u('c', [u('b', {x: 2}), u('d', u('b', {x: 3}))])
-        ])
-      ),
-      u('b', {x: 1}),
-      'should return the first descendant node'
-    )
-
-    assert.deepEqual(
-      select('a', u('a', {c: 1})),
-      u('a', {c: 1}),
-      'should return the given node if it matches'
-    )
-
-    assert.deepEqual(
-      select(
-        'b',
-        u('a', [
-          u('b', {x: 1}, [u('b', {x: 2}), u('b', {x: 3}, [u('b', {x: 4})])])
-        ])
-      ),
-      u('b', {x: 1}, [u('b', {x: 2}), u('b', {x: 3}, [u('b', {x: 4})])]),
-      'should return the first match'
-    )
-
-    assert.deepEqual(
-      select('a c d', u('a', [u('b', [u('c', [u('d', [u('d')])])])])),
-      u('d', [u('d')]),
-      'should return deep matches'
-    )
-  })
-
-  await t.test('child selector', () => {
-    assert.deepEqual(
-      select('c > e', u('a', [u('b'), u('c', [u('d'), u('e', [u('f')])])])),
-      u('e', [u('f')]),
-      'should return child nodes'
-    )
-
-    assert.deepEqual(
-      select(
-        'b > b',
-        u('a', [
-          u('b', {x: 1}, [u('b', {x: 2}), u('b', {x: 3}, [u('b', {x: 4})])])
-        ])
-      ),
-      u('b', {x: 2}),
-      'should return matches with nested matches'
-    )
-
-    assert.deepEqual(
-      select('b > c > d', u('a', [u('b', [u('c', [u('d', [u('d')])])])])),
-      u('d', [u('d')]),
-      'should return deep matches'
-    )
-  })
-
-  await t.test('adjacent sibling selector', () => {
-    assert.deepEqual(
-      select(
-        'c + b',
-        u('a', [
-          u('b', 'Alpha'),
-          u('c', 'Bravo'),
-          u('b', 'Charlie'),
-          u('b', 'Delta'),
-          u('d', [u('e', 'Echo')])
-        ])
-      ),
-      u('b', 'Charlie'),
-      'should return adjacent sibling'
-    )
-
-    assert.equal(
-      select(
-        'c + b',
-        u('a', [
-          u('b', 'Alpha'),
-          u('c', 'Bravo'),
-          u('d', 'Charlie'),
-          u('b', 'Delta')
-        ])
-      ),
-      null,
-      'should return nothing without matches'
-    )
-  })
-
-  await t.test('general sibling selector', () => {
-    assert.deepEqual(
-      select(
-        'c ~ b',
-        u('a', [
-          u('b', 'Alpha'),
-          u('c', 'Bravo'),
-          u('b', 'Charlie'),
-          u('b', 'Delta'),
-          u('d', [u('e', 'Echo')])
-        ])
-      ),
-      u('b', 'Charlie'),
-      'should return the first adjacent sibling'
-    )
-
-    assert.deepEqual(
-      select(
-        'c ~ b',
-        u('a', [
-          u('b', 'Alpha'),
-          u('c', 'Bravo'),
-          u('d', 'Charlie'),
-          u('b', 'Delta')
-        ])
-      ),
-      u('b', 'Delta'),
-      'should return future siblings'
-    )
-
-    assert.equal(
-      select(
-        'c ~ b',
-        u('a', [u('b', 'Alpha'), u('c', 'Bravo'), u('d', 'Charlie')])
-      ),
-      null,
-      'should return nothing without matches'
-    )
-  })
-
-  await t.test('parent-sensitive pseudo-selectors', async (t) => {
-    await t.test(':first-child', () => {
+  await t.test('descendant selector', async function (t) {
+    await t.test('should return the first descendant node', async function () {
       assert.deepEqual(
         select(
-          ':first-child',
+          'b',
+          u('a', [
+            u('b', {x: 1}),
+            u('c', [u('b', {x: 2}), u('d', u('b', {x: 3}))])
+          ])
+        ),
+        u('b', {x: 1})
+      )
+    })
+
+    await t.test(
+      'should return the given node if it matches',
+      async function () {
+        assert.deepEqual(select('a', u('a', {c: 1})), u('a', {c: 1}))
+      }
+    )
+
+    await t.test('should return the first match', async function () {
+      assert.deepEqual(
+        select(
+          'b',
+          u('a', [
+            u('b', {x: 1}, [u('b', {x: 2}), u('b', {x: 3}, [u('b', {x: 4})])])
+          ])
+        ),
+        u('b', {x: 1}, [u('b', {x: 2}), u('b', {x: 3}, [u('b', {x: 4})])])
+      )
+    })
+
+    await t.test('should return deep matches', async function () {
+      assert.deepEqual(
+        select('a c d', u('a', [u('b', [u('c', [u('d', [u('d')])])])])),
+        u('d', [u('d')])
+      )
+    })
+  })
+
+  await t.test('child selector', async function (t) {
+    await t.test('should return child nodes', async function () {
+      assert.deepEqual(
+        select('c > e', u('a', [u('b'), u('c', [u('d'), u('e', [u('f')])])])),
+        u('e', [u('f')])
+      )
+    })
+
+    await t.test(
+      'should return matches with nested matches',
+      async function () {
+        assert.deepEqual(
+          select(
+            'b > b',
+            u('a', [
+              u('b', {x: 1}, [u('b', {x: 2}), u('b', {x: 3}, [u('b', {x: 4})])])
+            ])
+          ),
+          u('b', {x: 2})
+        )
+      }
+    )
+
+    await t.test('should return deep matches', async function () {
+      assert.deepEqual(
+        select('b > c > d', u('a', [u('b', [u('c', [u('d', [u('d')])])])])),
+        u('d', [u('d')])
+      )
+    })
+  })
+
+  await t.test('adjacent sibling selector', async function (t) {
+    await t.test('should return adjacent sibling', async function () {
+      assert.deepEqual(
+        select(
+          'c + b',
           u('a', [
             u('b', 'Alpha'),
             u('c', 'Bravo'),
@@ -232,460 +169,627 @@ test('select.select()', async (t) => {
             u('d', [u('e', 'Echo')])
           ])
         ),
-        u('b', 'Alpha'),
-        'should return the first child'
+        u('b', 'Charlie')
       )
+    })
 
+    await t.test('should return nothing without matches', async function () {
       assert.equal(
         select(
-          'c:first-child',
-          u('a', [u('b', 'Alpha'), u('c', 'Bravo'), u('d', 'Charlie')])
-        ),
-        null,
-        'should return nothing if nothing matches'
-      )
-    })
-
-    await t.test(':last-child', () => {
-      assert.deepEqual(
-        select(
-          ':last-child',
+          'c + b',
           u('a', [
             u('b', 'Alpha'),
             u('c', 'Bravo'),
-            u('b', 'Charlie'),
-            u('b', 'Delta'),
-            u('d', [u('e', 'Echo')])
-          ])
-        ),
-        u('d', [u('e', 'Echo')]),
-        'should return the last child'
-      )
-
-      assert.equal(
-        select(
-          'c:last-child',
-          u('a', [u('b', 'Alpha'), u('c', 'Bravo'), u('d', 'Charlie')])
-        ),
-        null,
-        'should return nothing if nothing matches'
-      )
-    })
-
-    await t.test(':only-child', () => {
-      assert.deepEqual(
-        select(
-          ':only-child',
-          u('a', [
-            u('b', 'Alpha'),
-            u('c', 'Bravo'),
-            u('b', 'Charlie'),
-            u('b', 'Delta'),
-            u('d', [u('b', 'Echo')])
-          ])
-        ),
-        u('b', 'Echo'),
-        'should return an only child'
-      )
-
-      assert.equal(
-        select(
-          'c:only-child',
-          u('a', [u('b', 'Alpha'), u('c', 'Bravo'), u('d', 'Charlie')])
-        ),
-        null,
-        'should return nothing if nothing matches'
-      )
-    })
-
-    await t.test(':nth-child', () => {
-      assert.deepEqual(
-        select(
-          'b:nth-child(odd)',
-          u('a', [
-            u('b', 'Alpha'),
-            u('b', 'Bravo'),
-            u('b', 'Charlie'),
-            u('b', 'Delta'),
-            u('b', 'Echo'),
-            u('b', 'Foxtrot')
-          ])
-        ),
-        u('b', 'Alpha'),
-        'should return the match for `:nth-child(odd)`'
-      )
-
-      assert.deepEqual(
-        select(
-          'b:nth-child(2n+1)',
-          u('a', [
-            u('b', 'Alpha'),
-            u('b', 'Bravo'),
-            u('b', 'Charlie'),
-            u('b', 'Delta'),
-            u('b', 'Echo'),
-            u('b', 'Foxtrot')
-          ])
-        ),
-        u('b', 'Alpha'),
-        'should return the match for `:nth-child(2n+1)`'
-      )
-
-      assert.deepEqual(
-        select(
-          'b:nth-child(even)',
-          u('a', [
-            u('b', 'Alpha'),
-            u('b', 'Bravo'),
-            u('b', 'Charlie'),
-            u('b', 'Delta'),
-            u('b', 'Echo'),
-            u('b', 'Foxtrot')
-          ])
-        ),
-        u('b', 'Bravo'),
-        'should return the match for `:nth-child(even)`'
-      )
-
-      assert.deepEqual(
-        select(
-          'b:nth-child(2n+0)',
-          u('a', [
-            u('b', 'Alpha'),
-            u('b', 'Bravo'),
-            u('b', 'Charlie'),
-            u('b', 'Delta'),
-            u('b', 'Echo'),
-            u('b', 'Foxtrot')
-          ])
-        ),
-        u('b', 'Bravo'),
-        'should return the match for `:nth-child(2n+0)`'
-      )
-    })
-
-    await t.test(':nth-last-child', () => {
-      assert.deepEqual(
-        select(
-          'b:nth-last-child(odd)',
-          u('a', [
-            u('b', 'Alpha'),
-            u('b', 'Bravo'),
-            u('b', 'Charlie'),
-            u('b', 'Delta'),
-            u('b', 'Echo'),
-            u('b', 'Foxtrot')
-          ])
-        ),
-        u('b', 'Bravo'),
-        'should return the last match for `:nth-last-child(odd)`'
-      )
-
-      assert.deepEqual(
-        select(
-          'b:nth-last-child(2n+1)',
-          u('a', [
-            u('b', 'Alpha'),
-            u('b', 'Bravo'),
-            u('b', 'Charlie'),
-            u('b', 'Delta'),
-            u('b', 'Echo'),
-            u('b', 'Foxtrot')
-          ])
-        ),
-        u('b', 'Bravo'),
-        'should return the last match for `:nth-last-child(2n+1)`'
-      )
-
-      assert.deepEqual(
-        select(
-          'b:nth-last-child(even)',
-          u('a', [
-            u('b', 'Alpha'),
-            u('b', 'Bravo'),
-            u('b', 'Charlie'),
-            u('b', 'Delta'),
-            u('b', 'Echo'),
-            u('b', 'Foxtrot')
-          ])
-        ),
-        u('b', 'Alpha'),
-        'should return the last match for `:nth-last-child(even)`'
-      )
-
-      assert.deepEqual(
-        select(
-          'b:nth-last-child(2n+0)',
-          u('a', [
-            u('b', 'Alpha'),
-            u('b', 'Bravo'),
-            u('b', 'Charlie'),
-            u('b', 'Delta'),
-            u('b', 'Echo'),
-            u('b', 'Foxtrot')
-          ])
-        ),
-        u('b', 'Alpha'),
-        'should return the last match for `:nth-last-child(2n+0)`'
-      )
-    })
-
-    await t.test(':nth-of-type', () => {
-      assert.deepEqual(
-        select(
-          'b:nth-of-type(odd)',
-          u('a', [
-            u('b', 'Alpha'),
-            u('c', 'Bravo'),
-            u('b', 'Charlie'),
-            u('c', 'Delta'),
-            u('b', 'Echo'),
-            u('c', 'Foxtrot')
-          ])
-        ),
-        u('b', 'Alpha'),
-        'should return the first match for `:nth-of-type(odd)`'
-      )
-
-      assert.deepEqual(
-        select(
-          'b:nth-of-type(2n+1)',
-          u('a', [
-            u('b', 'Alpha'),
-            u('c', 'Bravo'),
-            u('b', 'Charlie'),
-            u('c', 'Delta'),
-            u('b', 'Echo'),
-            u('c', 'Foxtrot')
-          ])
-        ),
-        u('b', 'Alpha'),
-        'should return the first match for `:nth-of-type(2n+1)`'
-      )
-
-      assert.deepEqual(
-        select(
-          'b:nth-of-type(even)',
-          u('a', [
-            u('b', 'Alpha'),
-            u('c', 'Bravo'),
-            u('b', 'Charlie'),
-            u('c', 'Delta'),
-            u('b', 'Echo'),
-            u('c', 'Foxtrot')
-          ])
-        ),
-        u('b', 'Charlie'),
-        'should return the first match for `:nth-of-type(even)`'
-      )
-
-      assert.deepEqual(
-        select(
-          'b:nth-of-type(2n+0)',
-          u('a', [
-            u('b', 'Alpha'),
-            u('c', 'Bravo'),
-            u('b', 'Charlie'),
-            u('c', 'Delta'),
-            u('b', 'Echo'),
-            u('c', 'Foxtrot')
-          ])
-        ),
-        u('b', 'Charlie'),
-        'should return the first match for `:nth-of-type(2n+0)`'
-      )
-    })
-
-    await t.test(':nth-last-of-type', () => {
-      assert.deepEqual(
-        select(
-          'b:nth-last-of-type(odd)',
-          u('a', [
-            u('b', 'Alpha'),
-            u('c', 'Bravo'),
-            u('b', 'Charlie'),
-            u('c', 'Delta'),
-            u('b', 'Echo'),
-            u('c', 'Foxtrot')
-          ])
-        ),
-        u('b', 'Alpha'),
-        'should return the last match for `:nth-last-of-type(odd)`s'
-      )
-
-      assert.deepEqual(
-        select(
-          'b:nth-last-of-type(2n+1)',
-          u('a', [
-            u('b', 'Alpha'),
-            u('c', 'Bravo'),
-            u('b', 'Charlie'),
-            u('c', 'Delta'),
-            u('b', 'Echo'),
-            u('c', 'Foxtrot')
-          ])
-        ),
-        u('b', 'Alpha'),
-        'should return the last match for `:nth-last-of-type(2n+1)`'
-      )
-
-      assert.deepEqual(
-        select(
-          'b:nth-last-of-type(even)',
-          u('a', [
-            u('b', 'Alpha'),
-            u('c', 'Bravo'),
-            u('b', 'Charlie'),
-            u('c', 'Delta'),
-            u('b', 'Echo'),
-            u('c', 'Foxtrot')
-          ])
-        ),
-        u('b', 'Charlie'),
-        'should return the last match for `:nth-last-of-type(even)`'
-      )
-
-      assert.deepEqual(
-        select(
-          'b:nth-last-of-type(2n+0)',
-          u('a', [
-            u('b', 'Alpha'),
-            u('c', 'Bravo'),
-            u('b', 'Charlie'),
-            u('c', 'Delta'),
-            u('b', 'Echo'),
-            u('c', 'Foxtrot')
-          ])
-        ),
-        u('b', 'Charlie'),
-        'should return the last match for `:nth-last-of-type(2n+0)`'
-      )
-    })
-
-    await t.test(':first-of-type', () => {
-      assert.deepEqual(
-        select(
-          'b:first-of-type',
-          u('a', [
-            u('b', 'Alpha'),
-            u('c', 'Bravo'),
-            u('b', 'Charlie'),
-            u('c', 'Delta'),
-            u('b', 'Echo'),
-            u('c', 'Foxtrot')
-          ])
-        ),
-        u('b', 'Alpha'),
-        'should return the first match for `:first-of-type`'
-      )
-
-      assert.equal(
-        select('b:first-of-type', u('a', [])),
-        null,
-        'should return nothing without matches'
-      )
-    })
-
-    await t.test(':last-of-type', () => {
-      assert.deepEqual(
-        select(
-          'b:last-of-type',
-          u('a', [
-            u('b', 'Alpha'),
-            u('c', 'Bravo'),
-            u('b', 'Charlie'),
-            u('c', 'Delta'),
-            u('b', 'Echo'),
-            u('c', 'Foxtrot')
-          ])
-        ),
-        u('b', 'Echo'),
-        'should return the last match for `:last-of-type`s'
-      )
-
-      assert.equal(
-        select('b:last-of-type', u('a', [])),
-        null,
-        'should return nothing without matches'
-      )
-    })
-
-    await t.test(':only-of-type', () => {
-      assert.deepEqual(
-        select(
-          'c:only-of-type',
-          u('a', [
-            u('b', 'Alpha'),
-            u('b', 'Bravo'),
-            u('c', 'Charlie'),
+            u('d', 'Charlie'),
             u('b', 'Delta')
           ])
         ),
-        u('c', 'Charlie'),
-        'should return the only match'
+        null
       )
+    })
+  })
 
-      assert.equal(
+  await t.test('general sibling selector', async function (t) {
+    await t.test('should return the first adjacent sibling', async function () {
+      assert.deepEqual(
         select(
-          'b:only-of-type',
+          'c ~ b',
           u('a', [
             u('b', 'Alpha'),
             u('c', 'Bravo'),
             u('b', 'Charlie'),
-            u('c', 'Delta'),
-            u('b', 'Echo'),
-            u('c', 'Foxtrot')
+            u('b', 'Delta'),
+            u('d', [u('e', 'Echo')])
           ])
         ),
-        null,
-        'should return nothing with too many matches'
+        u('b', 'Charlie')
       )
+    })
 
+    await t.test('should return future siblings', async function () {
+      assert.deepEqual(
+        select(
+          'c ~ b',
+          u('a', [
+            u('b', 'Alpha'),
+            u('c', 'Bravo'),
+            u('d', 'Charlie'),
+            u('b', 'Delta')
+          ])
+        ),
+        u('b', 'Delta')
+      )
+    })
+
+    await t.test('should return nothing without matches', async function () {
       assert.equal(
-        select('b:only-of-type', u('a', [])),
-        null,
-        'should return nothing without matches'
-      )
-    })
-
-    await t.test(':root', () => {
-      assert.deepEqual(
-        select(':root', u('a', [u('b'), u('c', [u('d')])])),
-        u('a', [u('b'), u('c', [u('d')])]),
-        'should return the given node'
-      )
-    })
-
-    await t.test(':scope', () => {
-      assert.deepEqual(
-        select(':scope', u('a', [u('b'), u('c', [u('d')])])),
-        u('a', [u('b'), u('c', [u('d')])]),
-        'should return the given node'
-      )
-    })
-
-    await t.test(':has', () => {
-      assert.deepEqual(
-        select('c:has(:first-child)', u('a', [u('b'), u('c', [u('d')])])),
-        u('c', [u('d')]),
-        'should select a node'
+        select(
+          'c ~ b',
+          u('a', [u('b', 'Alpha'), u('c', 'Bravo'), u('d', 'Charlie')])
+        ),
+        null
       )
     })
   })
 
-  await t.test(':is', () => {
-    assert.deepEqual(
-      select('y:is(:first-child)', u('x', [u('y', 'a'), u('y', 'b')])),
-      u('y', 'a'),
-      'should support parent-sensitive `:is`'
-    )
+  await t.test('parent-sensitive pseudo-selectors', async function (t) {
+    await t.test(':first-child', async function (t) {
+      await t.test('should return the first child', async function () {
+        assert.deepEqual(
+          select(
+            ':first-child',
+            u('a', [
+              u('b', 'Alpha'),
+              u('c', 'Bravo'),
+              u('b', 'Charlie'),
+              u('b', 'Delta'),
+              u('d', [u('e', 'Echo')])
+            ])
+          ),
+          u('b', 'Alpha')
+        )
+      })
+
+      await t.test(
+        'should return nothing if nothing matches',
+        async function () {
+          assert.equal(
+            select(
+              'c:first-child',
+              u('a', [u('b', 'Alpha'), u('c', 'Bravo'), u('d', 'Charlie')])
+            ),
+            null
+          )
+        }
+      )
+    })
+
+    await t.test(':last-child', async function (t) {
+      await t.test('should return the last child', async function () {
+        assert.deepEqual(
+          select(
+            ':last-child',
+            u('a', [
+              u('b', 'Alpha'),
+              u('c', 'Bravo'),
+              u('b', 'Charlie'),
+              u('b', 'Delta'),
+              u('d', [u('e', 'Echo')])
+            ])
+          ),
+          u('d', [u('e', 'Echo')])
+        )
+      })
+
+      await t.test(
+        'should return nothing if nothing matches',
+        async function () {
+          assert.equal(
+            select(
+              'c:last-child',
+              u('a', [u('b', 'Alpha'), u('c', 'Bravo'), u('d', 'Charlie')])
+            ),
+            null
+          )
+        }
+      )
+    })
+
+    await t.test(':only-child', async function (t) {
+      await t.test('should return an only child', async function () {
+        assert.deepEqual(
+          select(
+            ':only-child',
+            u('a', [
+              u('b', 'Alpha'),
+              u('c', 'Bravo'),
+              u('b', 'Charlie'),
+              u('b', 'Delta'),
+              u('d', [u('b', 'Echo')])
+            ])
+          ),
+          u('b', 'Echo')
+        )
+      })
+
+      await t.test(
+        'should return nothing if nothing matches',
+        async function () {
+          assert.equal(
+            select(
+              'c:only-child',
+              u('a', [u('b', 'Alpha'), u('c', 'Bravo'), u('d', 'Charlie')])
+            ),
+            null
+          )
+        }
+      )
+    })
+
+    await t.test(':nth-child', async function (t) {
+      await t.test(
+        'should return the match for `:nth-child(odd)`',
+        async function () {
+          assert.deepEqual(
+            select(
+              'b:nth-child(odd)',
+              u('a', [
+                u('b', 'Alpha'),
+                u('b', 'Bravo'),
+                u('b', 'Charlie'),
+                u('b', 'Delta'),
+                u('b', 'Echo'),
+                u('b', 'Foxtrot')
+              ])
+            ),
+            u('b', 'Alpha')
+          )
+        }
+      )
+
+      await t.test(
+        'should return the match for `:nth-child(2n+1)`',
+        async function () {
+          assert.deepEqual(
+            select(
+              'b:nth-child(2n+1)',
+              u('a', [
+                u('b', 'Alpha'),
+                u('b', 'Bravo'),
+                u('b', 'Charlie'),
+                u('b', 'Delta'),
+                u('b', 'Echo'),
+                u('b', 'Foxtrot')
+              ])
+            ),
+            u('b', 'Alpha')
+          )
+        }
+      )
+
+      await t.test(
+        'should return the match for `:nth-child(even)`',
+        async function () {
+          assert.deepEqual(
+            select(
+              'b:nth-child(even)',
+              u('a', [
+                u('b', 'Alpha'),
+                u('b', 'Bravo'),
+                u('b', 'Charlie'),
+                u('b', 'Delta'),
+                u('b', 'Echo'),
+                u('b', 'Foxtrot')
+              ])
+            ),
+            u('b', 'Bravo')
+          )
+        }
+      )
+
+      await t.test(
+        'should return the match for `:nth-child(2n+0)`',
+        async function () {
+          assert.deepEqual(
+            select(
+              'b:nth-child(2n+0)',
+              u('a', [
+                u('b', 'Alpha'),
+                u('b', 'Bravo'),
+                u('b', 'Charlie'),
+                u('b', 'Delta'),
+                u('b', 'Echo'),
+                u('b', 'Foxtrot')
+              ])
+            ),
+            u('b', 'Bravo')
+          )
+        }
+      )
+    })
+
+    await t.test(':nth-last-child', async function (t) {
+      await t.test(
+        'should return the last match for `:nth-last-child(odd)`',
+        async function () {
+          assert.deepEqual(
+            select(
+              'b:nth-last-child(odd)',
+              u('a', [
+                u('b', 'Alpha'),
+                u('b', 'Bravo'),
+                u('b', 'Charlie'),
+                u('b', 'Delta'),
+                u('b', 'Echo'),
+                u('b', 'Foxtrot')
+              ])
+            ),
+            u('b', 'Bravo')
+          )
+        }
+      )
+
+      await t.test(
+        'should return the last match for `:nth-last-child(2n+1)`',
+        async function () {
+          assert.deepEqual(
+            select(
+              'b:nth-last-child(2n+1)',
+              u('a', [
+                u('b', 'Alpha'),
+                u('b', 'Bravo'),
+                u('b', 'Charlie'),
+                u('b', 'Delta'),
+                u('b', 'Echo'),
+                u('b', 'Foxtrot')
+              ])
+            ),
+            u('b', 'Bravo')
+          )
+        }
+      )
+
+      await t.test(
+        'should return the last match for `:nth-last-child(even)`',
+        async function () {
+          assert.deepEqual(
+            select(
+              'b:nth-last-child(even)',
+              u('a', [
+                u('b', 'Alpha'),
+                u('b', 'Bravo'),
+                u('b', 'Charlie'),
+                u('b', 'Delta'),
+                u('b', 'Echo'),
+                u('b', 'Foxtrot')
+              ])
+            ),
+            u('b', 'Alpha')
+          )
+        }
+      )
+
+      await t.test(
+        'should return the last match for `:nth-last-child(2n+0)`',
+        async function () {
+          assert.deepEqual(
+            select(
+              'b:nth-last-child(2n+0)',
+              u('a', [
+                u('b', 'Alpha'),
+                u('b', 'Bravo'),
+                u('b', 'Charlie'),
+                u('b', 'Delta'),
+                u('b', 'Echo'),
+                u('b', 'Foxtrot')
+              ])
+            ),
+            u('b', 'Alpha')
+          )
+        }
+      )
+    })
+
+    await t.test(':nth-of-type', async function (t) {
+      await t.test(
+        'should return the first match for `:nth-of-type(odd)`',
+        async function () {
+          assert.deepEqual(
+            select(
+              'b:nth-of-type(odd)',
+              u('a', [
+                u('b', 'Alpha'),
+                u('c', 'Bravo'),
+                u('b', 'Charlie'),
+                u('c', 'Delta'),
+                u('b', 'Echo'),
+                u('c', 'Foxtrot')
+              ])
+            ),
+            u('b', 'Alpha')
+          )
+        }
+      )
+
+      await t.test(
+        'should return the first match for `:nth-of-type(2n+1)`',
+        async function () {
+          assert.deepEqual(
+            select(
+              'b:nth-of-type(2n+1)',
+              u('a', [
+                u('b', 'Alpha'),
+                u('c', 'Bravo'),
+                u('b', 'Charlie'),
+                u('c', 'Delta'),
+                u('b', 'Echo'),
+                u('c', 'Foxtrot')
+              ])
+            ),
+            u('b', 'Alpha')
+          )
+        }
+      )
+
+      await t.test(
+        'should return the first match for `:nth-of-type(even)`',
+        async function () {
+          assert.deepEqual(
+            select(
+              'b:nth-of-type(even)',
+              u('a', [
+                u('b', 'Alpha'),
+                u('c', 'Bravo'),
+                u('b', 'Charlie'),
+                u('c', 'Delta'),
+                u('b', 'Echo'),
+                u('c', 'Foxtrot')
+              ])
+            ),
+            u('b', 'Charlie')
+          )
+        }
+      )
+
+      await t.test(
+        'should return the first match for `:nth-of-type(2n+0)`',
+        async function () {
+          assert.deepEqual(
+            select(
+              'b:nth-of-type(2n+0)',
+              u('a', [
+                u('b', 'Alpha'),
+                u('c', 'Bravo'),
+                u('b', 'Charlie'),
+                u('c', 'Delta'),
+                u('b', 'Echo'),
+                u('c', 'Foxtrot')
+              ])
+            ),
+            u('b', 'Charlie')
+          )
+        }
+      )
+    })
+
+    await t.test(':nth-last-of-type', async function (t) {
+      await t.test(
+        'should return the last match for `:nth-last-of-type(odd)`s',
+        async function () {
+          assert.deepEqual(
+            select(
+              'b:nth-last-of-type(odd)',
+              u('a', [
+                u('b', 'Alpha'),
+                u('c', 'Bravo'),
+                u('b', 'Charlie'),
+                u('c', 'Delta'),
+                u('b', 'Echo'),
+                u('c', 'Foxtrot')
+              ])
+            ),
+            u('b', 'Alpha')
+          )
+        }
+      )
+
+      await t.test(
+        'should return the last match for `:nth-last-of-type(2n+1)`',
+        async function () {
+          assert.deepEqual(
+            select(
+              'b:nth-last-of-type(2n+1)',
+              u('a', [
+                u('b', 'Alpha'),
+                u('c', 'Bravo'),
+                u('b', 'Charlie'),
+                u('c', 'Delta'),
+                u('b', 'Echo'),
+                u('c', 'Foxtrot')
+              ])
+            ),
+            u('b', 'Alpha')
+          )
+        }
+      )
+
+      await t.test(
+        'should return the last match for `:nth-last-of-type(even)`',
+        async function () {
+          assert.deepEqual(
+            select(
+              'b:nth-last-of-type(even)',
+              u('a', [
+                u('b', 'Alpha'),
+                u('c', 'Bravo'),
+                u('b', 'Charlie'),
+                u('c', 'Delta'),
+                u('b', 'Echo'),
+                u('c', 'Foxtrot')
+              ])
+            ),
+            u('b', 'Charlie')
+          )
+        }
+      )
+
+      await t.test(
+        'should return the last match for `:nth-last-of-type(2n+0)`',
+        async function () {
+          assert.deepEqual(
+            select(
+              'b:nth-last-of-type(2n+0)',
+              u('a', [
+                u('b', 'Alpha'),
+                u('c', 'Bravo'),
+                u('b', 'Charlie'),
+                u('c', 'Delta'),
+                u('b', 'Echo'),
+                u('c', 'Foxtrot')
+              ])
+            ),
+            u('b', 'Charlie')
+          )
+        }
+      )
+    })
+
+    await t.test(':first-of-type', async function (t) {
+      await t.test(
+        'should return the first match for `:first-of-type`',
+        async function () {
+          assert.deepEqual(
+            select(
+              'b:first-of-type',
+              u('a', [
+                u('b', 'Alpha'),
+                u('c', 'Bravo'),
+                u('b', 'Charlie'),
+                u('c', 'Delta'),
+                u('b', 'Echo'),
+                u('c', 'Foxtrot')
+              ])
+            ),
+            u('b', 'Alpha')
+          )
+        }
+      )
+
+      await t.test('should return nothing without matches', async function () {
+        assert.equal(select('b:first-of-type', u('a', [])), null)
+      })
+    })
+
+    await t.test(':last-of-type', async function (t) {
+      await t.test(
+        'should return the last match for `:last-of-type`s',
+        async function () {
+          assert.deepEqual(
+            select(
+              'b:last-of-type',
+              u('a', [
+                u('b', 'Alpha'),
+                u('c', 'Bravo'),
+                u('b', 'Charlie'),
+                u('c', 'Delta'),
+                u('b', 'Echo'),
+                u('c', 'Foxtrot')
+              ])
+            ),
+            u('b', 'Echo')
+          )
+        }
+      )
+
+      await t.test('should return nothing without matches', async function () {
+        assert.equal(select('b:last-of-type', u('a', [])), null)
+      })
+    })
+
+    await t.test(':only-of-type', async function (t) {
+      await t.test('should return the only match', async function () {
+        assert.deepEqual(
+          select(
+            'c:only-of-type',
+            u('a', [
+              u('b', 'Alpha'),
+              u('b', 'Bravo'),
+              u('c', 'Charlie'),
+              u('b', 'Delta')
+            ])
+          ),
+          u('c', 'Charlie')
+        )
+      })
+
+      await t.test(
+        'should return nothing with too many matches',
+        async function () {
+          assert.equal(
+            select(
+              'b:only-of-type',
+              u('a', [
+                u('b', 'Alpha'),
+                u('c', 'Bravo'),
+                u('b', 'Charlie'),
+                u('c', 'Delta'),
+                u('b', 'Echo'),
+                u('c', 'Foxtrot')
+              ])
+            ),
+            null
+          )
+        }
+      )
+
+      await t.test('should return nothing without matches', async function () {
+        assert.equal(select('b:only-of-type', u('a', [])), null)
+      })
+    })
+
+    await t.test(':root', async function (t) {
+      await t.test('should return the given node', async function () {
+        assert.deepEqual(
+          select(':root', u('a', [u('b'), u('c', [u('d')])])),
+          u('a', [u('b'), u('c', [u('d')])])
+        )
+      })
+    })
+
+    await t.test(':scope', async function (t) {
+      await t.test('should return the given node', async function () {
+        assert.deepEqual(
+          select(':scope', u('a', [u('b'), u('c', [u('d')])])),
+          u('a', [u('b'), u('c', [u('d')])])
+        )
+      })
+    })
+
+    await t.test(':has', async function (t) {
+      await t.test('should select a node', async function () {
+        assert.deepEqual(
+          select('c:has(:first-child)', u('a', [u('b'), u('c', [u('d')])])),
+          u('c', [u('d')])
+        )
+      })
+    })
   })
 
-  await t.test(':not', () => {
-    assert.deepEqual(
-      select('y:not(:first-child)', u('x', [u('y', 'a'), u('y', 'b')])),
-      u('y', 'b'),
-      'should support parent-sensitive `:not`'
-    )
+  await t.test(':is', async function (t) {
+    await t.test('should support parent-sensitive `:is`', async function () {
+      assert.deepEqual(
+        select('y:is(:first-child)', u('x', [u('y', 'a'), u('y', 'b')])),
+        u('y', 'a')
+      )
+    })
+  })
+
+  await t.test(':not', async function (t) {
+    await t.test('should support parent-sensitive `:not`', async function () {
+      assert.deepEqual(
+        select('y:not(:first-child)', u('x', [u('y', 'a'), u('y', 'b')])),
+        u('y', 'b')
+      )
+    })
   })
 })

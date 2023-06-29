@@ -7,86 +7,86 @@ import test from 'node:test'
 import {u} from 'unist-builder'
 import {matches} from '../index.js'
 
-test('select.matches()', async (t) => {
-  assert.equal(matches('*', u('root', [])), true, 'should work (1)')
-  assert.equal(matches('*', {type: 'a', children: []}), true, 'should work (2)')
-  await t.test('invalid selector', () => {
-    assert.throws(
-      () => {
-        // @ts-expect-error runtime.
+test('select.matches()', async function (t) {
+  await t.test('should work (1)', async function () {
+    assert.equal(matches('*', u('root', [])), true)
+  })
+
+  await t.test('should work (2)', async function () {
+    assert.equal(matches('*', {type: 'a', children: []}), true)
+  })
+
+  await t.test('invalid selector', async function (t) {
+    await t.test('should throw without selector', async function () {
+      assert.throws(function () {
+        // @ts-expect-error check that a runtime error is thrown.
         matches()
-      },
-      /Error: Expected `string` as selector, not `undefined`/,
-      'should throw without selector'
-    )
+      }, /Error: Expected `string` as selector, not `undefined`/)
+    })
 
-    assert.throws(
-      () => {
-        // @ts-expect-error runtime.
+    await t.test('should throw w/ invalid selector (1)', async function () {
+      assert.throws(function () {
+        // @ts-expect-error check that a runtime error is thrown.
         matches([], u('root', []))
-      },
-      /Error: Expected `string` as selector, not ``/,
-      'should throw w/ invalid selector (1)'
-    )
+      }, /Error: Expected `string` as selector, not ``/)
+    })
 
-    assert.throws(
-      () => {
+    await t.test('should throw w/ invalid selector (2)', async function () {
+      assert.throws(function () {
         matches('@supports (transform-origin: 5% 5%) {}', u('root', []))
-      },
-      /Expected rule but "@" found/,
-      'should throw w/ invalid selector (2)'
+      }, /Expected rule but "@" found/)
+    })
+
+    await t.test(
+      'should throw on invalid attribute operators',
+      async function () {
+        assert.throws(function () {
+          matches('[foo%=bar]', u('root', []))
+        }, /Expected a valid attribute selector operator/)
+      }
     )
 
-    assert.throws(
-      () => {
-        matches('[foo%=bar]', u('root', []))
-      },
-      /Expected a valid attribute selector operator/,
-      'should throw on invalid attribute operators'
-    )
-
-    assert.throws(
-      () => {
+    await t.test('should throw on invalid pseudo classes', async function () {
+      assert.throws(function () {
         matches(':active', u('root', []))
-      },
-      /Error: Unknown pseudo-selector `active`/,
-      'should throw on invalid pseudo classes'
+      }, /Error: Unknown pseudo-selector `active`/)
+    })
+
+    await t.test(
+      'should throw on invalid pseudo class “functions”',
+      async function () {
+        assert.throws(function () {
+          matches(':nth-foo(2n+1)', u('root', []))
+        }, /Unknown pseudo-class: "nth-foo"/)
+      }
     )
 
-    assert.throws(
-      () => {
-        matches(':nth-foo(2n+1)', u('root', []))
-      },
-      /Unknown pseudo-class: "nth-foo"/,
-      'should throw on invalid pseudo class “functions”'
-    )
-
-    assert.throws(
-      () => {
+    await t.test('should throw on invalid pseudo elements', async function () {
+      assert.throws(function () {
         matches('::before', u('root', []))
-      },
-      /Invalid selector: `::before`/,
-      'should throw on invalid pseudo elements'
+      }, /Invalid selector: `::before`/)
+    })
+
+    await t.test(
+      'should throw on nested selectors (descendant)',
+      async function () {
+        assert.throws(function () {
+          matches('foo bar', u('root', []))
+        }, /Error: Expected selector without nesting/)
+      }
     )
 
-    assert.throws(
-      () => {
-        matches('foo bar', u('root', []))
-      },
-      /Error: Expected selector without nesting/,
-      'should throw on nested selectors (descendant)'
-    )
-
-    assert.throws(
-      () => {
-        matches('foo > bar', u('root', []))
-      },
-      /Error: Expected selector without nesting/,
-      'should throw on nested selectors (direct child)'
+    await t.test(
+      'should throw on nested selectors (direct child)',
+      async function () {
+        assert.throws(function () {
+          matches('foo > bar', u('root', []))
+        }, /Error: Expected selector without nesting/)
+      }
     )
   })
 
-  await t.test('parent-sensitive pseudo-selectors', () => {
+  await t.test('parent-sensitive pseudo-selectors', async function (t) {
     const simplePseudos = [
       'first-child',
       'first-of-type',
@@ -96,6 +96,14 @@ test('select.matches()', async (t) => {
       'only-of-type'
     ]
 
+    for (const pseudo of simplePseudos) {
+      await t.test('should throw on `' + pseudo + '`', async function () {
+        assert.throws(function () {
+          matches(':' + pseudo, u('root', []))
+        }, new RegExp('Error: Cannot use `:' + pseudo + '` without parent'))
+      })
+    }
+
     const functionalPseudos = [
       'nth-child',
       'nth-last-child',
@@ -103,477 +111,734 @@ test('select.matches()', async (t) => {
       'nth-last-of-type'
     ]
 
-    let index = -1
-
-    while (++index < simplePseudos.length) {
-      const pseudo = simplePseudos[index]
-
-      assert.throws(
-        () => {
-          matches(':' + pseudo, u('root', []))
-        },
-        new RegExp('Error: Cannot use `:' + pseudo + '` without parent'),
-        'should throw on `' + pseudo + '`'
-      )
-    }
-
-    index = -1
-
-    while (++index < functionalPseudos.length) {
-      const pseudo = functionalPseudos[index]
-
-      assert.throws(
-        () => {
+    for (const pseudo of functionalPseudos) {
+      await t.test('should throw on `' + pseudo + '()`', async function () {
+        assert.throws(function () {
           matches(':' + pseudo + '()', u('root', []))
-        },
-        /Formula parse error/,
-        'should throw on `' + pseudo + '()`'
-      )
+        }, /Formula parse error/)
+      })
     }
   })
 
-  await t.test('general', () => {
-    assert.throws(
-      () => {
+  await t.test('general', async function (t) {
+    await t.test('should throw on empty selectors', async function () {
+      assert.throws(function () {
         matches('', u('root', []))
-      },
-      /Expected rule but end of input reached/,
-      'should throw on empty selectors'
+      }, /Expected rule but end of input reached/)
+    })
+
+    await t.test(
+      'should throw for a white-space only selector',
+      async function () {
+        assert.throws(function () {
+          matches(' ', u('root', []))
+        }, /Expected rule but end of input reached/)
+      }
     )
 
-    assert.throws(
-      () => {
-        matches(' ', u('root', []))
-      },
-      /Expected rule but end of input reached/,
-      'should throw for a white-space only selector'
+    await t.test(
+      'should return `false` if not given a node',
+      async function () {
+        assert.ok(!matches('*'))
+      }
     )
 
-    assert.ok(!matches('*'), 'false if not given a node')
-    assert.ok(
-      matches('*', /** @type {Literal} */ ({type: 'text', value: 'a'})),
-      'true if given an node'
+    await t.test('should return `true` if given an node', async function () {
+      assert.ok(matches('*', {type: 'text', value: 'a'}))
+    })
+  })
+
+  await t.test('multiple selectors', async function (t) {
+    await t.test('should support a matching selector', async function () {
+      assert.ok(matches('a, b', u('a')))
+    })
+
+    await t.test('should support a non-matching selector', async function () {
+      assert.ok(!matches('b, c', u('a')))
+    })
+  })
+
+  await t.test('tag-names: `div`, `*`', async function (t) {
+    await t.test('should yield `true` for `*`', async function () {
+      assert.ok(matches('*', u('a')))
+    })
+
+    await t.test('should yield `true` if types matches', async function () {
+      assert.ok(matches('b', u('b')))
+    })
+
+    await t.test(
+      'should yield `false` if types don’t matches',
+      async function () {
+        assert.ok(!matches('b', u('a')))
+      }
     )
   })
 
-  await t.test('multiple selectors', () => {
-    assert.ok(matches('a, b', u('a')), 'true')
-    assert.ok(!matches('b, c', u('a')), 'false')
-  })
-
-  await t.test('tag-names: `div`, `*`', () => {
-    assert.ok(matches('*', u('a')), 'true for `*`')
-    assert.ok(matches('b', u('b')), 'true if types matches')
-    assert.ok(!matches('b', u('a')), 'false if types don’t matches')
-  })
-
-  await t.test('id: `#id`', () => {
-    assert.throws(
-      () => {
+  await t.test('id: `#id`', async function (t) {
+    await t.test('should throw with id selector', async function () {
+      assert.throws(function () {
         matches('#one', u('a'))
-      },
-      /Error: Invalid selector: id/,
-      'should throw with id selector'
-    )
+      }, /Error: Invalid selector: id/)
+    })
   })
 
-  await t.test('class: `.class`', () => {
-    assert.throws(
-      () => {
+  await t.test('class: `.class`', async function (t) {
+    await t.test('should throw with class selector', async function () {
+      assert.throws(function () {
         matches('.one', u('a'))
-      },
-      /Error: Invalid selector: class/,
-      'should throw with class selector'
+      }, /Error: Invalid selector: class/)
+    })
+  })
+
+  await t.test('attributes, existence: `[attr]`', async function (t) {
+    await t.test(
+      'should yield `true` if attribute exists (string)',
+      async function () {
+        assert.ok(matches('[foo]', u('a', {foo: 'alpha'})))
+      }
+    )
+
+    await t.test(
+      'should yield `true` if attribute exists (number)',
+      async function () {
+        assert.ok(matches('[foo]', u('a', {foo: 0})))
+      }
+    )
+
+    await t.test(
+      'should yield `true` if attribute exists (array)',
+      async function () {
+        assert.ok(matches('[foo]', u('a', {foo: []})))
+      }
+    )
+
+    await t.test(
+      'should yield `true` if attribute exists (object)',
+      async function () {
+        assert.ok(matches('[foo]', u('a', {foo: {}})))
+      }
+    )
+
+    await t.test(
+      'should yield `false` if attribute does not exists',
+      async function () {
+        assert.ok(!matches('[foo]', u('a', {bar: 'bravo'})))
+      }
+    )
+
+    await t.test(
+      'should yield `false` if attribute does not exists (null)',
+      async function () {
+        assert.ok(!matches('[foo]', u('a', {foo: null})))
+      }
+    )
+
+    await t.test(
+      'should yield `false` if attribute does not exists (undefined)',
+      async function () {
+        assert.ok(!matches('[foo]', u('a', {foo: undefined})))
+      }
     )
   })
 
-  await t.test('attributes, existence: `[attr]`', () => {
-    assert.ok(
-      matches('[foo]', u('a', {foo: 'alpha'})),
-      'true if attribute exists (string)'
+  await t.test('attributes, equality: `[attr=value]`', async function (t) {
+    await t.test(
+      'should yield `true` if attribute matches (string)',
+      async function () {
+        assert.ok(matches('[foo=alpha]', u('a', {foo: 'alpha'})))
+      }
     )
-    assert.ok(
-      matches('[foo]', u('a', {foo: 0})),
-      'true if attribute exists (number)'
+
+    await t.test(
+      'should yield `true` if attribute matches (number)',
+      async function () {
+        assert.ok(matches('[foo=1]', u('a', {foo: 1})))
+      }
     )
-    assert.ok(
-      matches('[foo]', u('a', {foo: []})),
-      'true if attribute exists (array)'
+
+    await t.test(
+      'should yield `true` if attribute matches (array)',
+      async function () {
+        assert.ok(matches('[foo=alpha]', u('a', {foo: ['alpha']})))
+      }
     )
-    assert.ok(
-      matches('[foo]', u('a', {foo: {}})),
-      'true if attribute exists (object)'
+
+    await t.test(
+      'should yield `true` if attribute matches (array, 2)',
+      async function () {
+        assert.ok(
+          matches('[foo="alpha,bravo"]', u('a', {foo: ['alpha', 'bravo']}))
+        )
+      }
     )
-    assert.ok(
-      !matches('[foo]', u('a', {bar: 'bravo'})),
-      'false if attribute does not exists'
+
+    await t.test(
+      'should yield `true` if attribute matches (boolean, true)',
+      async function () {
+        assert.ok(matches('[foo=true]', u('a', {foo: true})))
+      }
     )
-    assert.ok(
-      !matches('[foo]', u('a', {foo: null})),
-      'false if attribute does not exists (null)'
+
+    await t.test(
+      'should yield `true` if attribute matches (boolean, false)',
+      async function () {
+        assert.ok(matches('[foo=false]', u('a', {foo: false})))
+      }
     )
-    assert.ok(
-      !matches('[foo]', u('a', {foo: undefined})),
-      'false if attribute does not exists (undefined)'
+
+    await t.test(
+      'should yield `false` if attribute is missing (null)',
+      async function () {
+        assert.ok(!matches('[foo=null]', u('a', {foo: null})))
+      }
+    )
+
+    await t.test(
+      'should yield `false` if attribute is missing (undefined)',
+      async function () {
+        assert.ok(!matches('[foo=undefined]', u('a', {foo: undefined})))
+      }
+    )
+
+    await t.test(
+      'should yield `false` if not matches (string)',
+      async function () {
+        assert.ok(!matches('[foo=alpha]', u('a', {foo: 'bravo'})))
+      }
+    )
+
+    await t.test(
+      'should yield `false` if not matches (number)',
+      async function () {
+        assert.ok(!matches('[foo=1]', u('a', {foo: 2})))
+      }
+    )
+
+    await t.test(
+      'should yield `false` if not matches (array)',
+      async function () {
+        assert.ok(!matches('[foo=alpha]', u('a', {foo: ['bravo']})))
+      }
+    )
+
+    await t.test(
+      'should yield `false` if not matches (array, 2)',
+      async function () {
+        assert.ok(
+          !matches('[foo="alpha,bravo"]', u('a', {foo: ['charlie', 'delta']}))
+        )
+      }
+    )
+
+    await t.test(
+      'should yield `false` if not matches (boolean, true)',
+      async function () {
+        assert.ok(!matches('[foo=true]', u('a', {foo: false})))
+      }
+    )
+
+    await t.test(
+      'should yield `false` if not matches (boolean, false)',
+      async function () {
+        assert.ok(!matches('[foo=false]', u('a', {foo: true})))
+      }
     )
   })
 
-  await t.test('attributes, equality: `[attr=value]`', () => {
-    assert.ok(
-      matches('[foo=alpha]', u('a', {foo: 'alpha'})),
-      'true if attribute matches (string)'
-    )
-    assert.ok(
-      matches('[foo=1]', u('a', {foo: 1})),
-      'true if attribute matches (number)'
-    )
-    assert.ok(
-      matches('[foo=alpha]', u('a', {foo: ['alpha']})),
-      'true if attribute matches (array)'
-    )
-    assert.ok(
-      matches('[foo="alpha,bravo"]', u('a', {foo: ['alpha', 'bravo']})),
-      'true if attribute matches (array, 2)'
-    )
-    assert.ok(
-      matches('[foo=true]', u('a', {foo: true})),
-      'true if attribute matches (boolean, true)'
-    )
-    assert.ok(
-      matches('[foo=false]', u('a', {foo: false})),
-      'true if attribute matches (boolean, false)'
-    )
-    assert.ok(
-      !matches('[foo=null]', u('a', {foo: null})),
-      'false if attribute is missing (null)'
-    )
-    assert.ok(
-      !matches('[foo=undefined]', u('a', {foo: undefined})),
-      'false if attribute is missing (undefined)'
+  await t.test('attributes, begins: `[attr^=value]`', async function (t) {
+    await t.test(
+      'should yield `true` if attribute matches (string)',
+      async function () {
+        assert.ok(matches('[foo^=al]', u('a', {foo: 'alpha'})))
+      }
     )
 
-    assert.ok(
-      !matches('[foo=alpha]', u('a', {foo: 'bravo'})),
-      'false if not matches (string)'
+    await t.test(
+      'should yield `false` if not matches (string)',
+      async function () {
+        assert.ok(!matches('[foo^=al]', u('a', {foo: 'bravo'})))
+      }
     )
-    assert.ok(
-      !matches('[foo=1]', u('a', {foo: 2})),
-      'false if not matches (number)'
+
+    await t.test(
+      'should yield `false` if not string (number)',
+      async function () {
+        assert.ok(!matches('[foo^=1]', u('a', {foo: 1})))
+      }
     )
-    assert.ok(
-      !matches('[foo=alpha]', u('a', {foo: ['bravo']})),
-      'false if not matches (array)'
+
+    await t.test(
+      'should yield `false` if not string (array)',
+      async function () {
+        assert.ok(!matches('[foo^=alpha]', u('a', {foo: ['alpha']})))
+      }
     )
-    assert.ok(
-      !matches('[foo="alpha,bravo"]', u('a', {foo: ['charlie', 'delta']})),
-      'false if not matches (array, 2)'
+
+    await t.test(
+      'should yield `false` if not string (boolean, true)',
+      async function () {
+        assert.ok(!matches('[foo^=true]', u('a', {foo: true})))
+      }
     )
-    assert.ok(
-      !matches('[foo=true]', u('a', {foo: false})),
-      'false if not matches (boolean, true)'
-    )
-    assert.ok(
-      !matches('[foo=false]', u('a', {foo: true})),
-      'false if not matches (boolean, false)'
+
+    await t.test(
+      'should yield `false` if not string (boolean, false)',
+      async function () {
+        assert.ok(!matches('[foo^=false]', u('a', {foo: false})))
+      }
     )
   })
 
-  await t.test('attributes, begins: `[attr^=value]`', () => {
-    assert.ok(
-      matches('[foo^=al]', u('a', {foo: 'alpha'})),
-      'true if attribute matches (string)'
-    )
-    assert.ok(
-      !matches('[foo^=al]', u('a', {foo: 'bravo'})),
-      'false if not matches (string)'
+  await t.test('attributes, ends: `[attr$=value]`', async function (t) {
+    await t.test(
+      'should yield `true` if attribute matches (string)',
+      async function () {
+        assert.ok(matches('[foo$=ha]', u('a', {foo: 'alpha'})))
+      }
     )
 
-    assert.ok(
-      !matches('[foo^=1]', u('a', {foo: 1})),
-      'false if not string (number)'
+    await t.test(
+      'should yield `false` if not matches (string)',
+      async function () {
+        assert.ok(!matches('[foo$=ha]', u('a', {foo: 'bravo'})))
+      }
     )
-    assert.ok(
-      !matches('[foo^=alpha]', u('a', {foo: ['alpha']})),
-      'false if not string (array)'
+
+    await t.test(
+      'should yield `false` if not string (number)',
+      async function () {
+        assert.ok(!matches('[foo$=1]', u('a', {foo: 1})))
+      }
     )
-    assert.ok(
-      !matches('[foo^=true]', u('a', {foo: true})),
-      'false if not string (boolean, true)'
+
+    await t.test(
+      'should yield `false` if not string (array)',
+      async function () {
+        assert.ok(!matches('[foo$=alpha]', u('a', {foo: ['alpha']})))
+      }
     )
-    assert.ok(
-      !matches('[foo^=false]', u('a', {foo: false})),
-      'false if not string (boolean, false)'
+
+    await t.test(
+      'should yield `false` if not string (boolean, true)',
+      async function () {
+        assert.ok(!matches('[foo$=true]', u('a', {foo: true})))
+      }
+    )
+
+    await t.test(
+      'should yield `false` if not string (boolean, false)',
+      async function () {
+        assert.ok(!matches('[foo$=false]', u('a', {foo: false})))
+      }
     )
   })
 
-  await t.test('attributes, ends: `[attr$=value]`', () => {
-    assert.ok(
-      matches('[foo$=ha]', u('a', {foo: 'alpha'})),
-      'true if attribute matches (string)'
-    )
-    assert.ok(
-      !matches('[foo$=ha]', u('a', {foo: 'bravo'})),
-      'false if not matches (string)'
+  await t.test('attributes, contains: `[attr*=value]`', async function (t) {
+    await t.test(
+      'should yield `true` if attribute matches (string)',
+      async function () {
+        assert.ok(matches('[foo*=ph]', u('a', {foo: 'alpha'})))
+      }
     )
 
-    assert.ok(
-      !matches('[foo$=1]', u('a', {foo: 1})),
-      'false if not string (number)'
+    await t.test(
+      'should yield `false` if not matches (string)',
+      async function () {
+        assert.ok(!matches('[foo*=ph]', u('a', {foo: 'bravo'})))
+      }
     )
-    assert.ok(
-      !matches('[foo$=alpha]', u('a', {foo: ['alpha']})),
-      'false if not string (array)'
+
+    await t.test(
+      'should yield `false` if not string (number)',
+      async function () {
+        assert.ok(!matches('[foo*=1]', u('a', {foo: 1})))
+      }
     )
-    assert.ok(
-      !matches('[foo$=true]', u('a', {foo: true})),
-      'false if not string (boolean, true)'
+
+    await t.test(
+      'should yield `false` if not string (array)',
+      async function () {
+        assert.ok(!matches('[foo*=alpha]', u('a', {foo: ['alpha']})))
+      }
     )
-    assert.ok(
-      !matches('[foo$=false]', u('a', {foo: false})),
-      'false if not string (boolean, false)'
+
+    await t.test(
+      'should yield `false` if not string (boolean, true)',
+      async function () {
+        assert.ok(!matches('[foo*=true]', u('a', {foo: true})))
+      }
+    )
+
+    await t.test(
+      'should yield `false` if not string (boolean, false)',
+      async function () {
+        assert.ok(!matches('[foo*=false]', u('a', {foo: false})))
+      }
     )
   })
 
-  await t.test('attributes, contains: `[attr*=value]`', () => {
-    assert.ok(
-      matches('[foo*=ph]', u('a', {foo: 'alpha'})),
-      'true if attribute matches (string)'
-    )
-    assert.ok(
-      !matches('[foo*=ph]', u('a', {foo: 'bravo'})),
-      'false if not matches (string)'
-    )
-    assert.ok(
-      !matches('[foo*=1]', u('a', {foo: 1})),
-      'false if not string (number)'
-    )
-    assert.ok(
-      !matches('[foo*=alpha]', u('a', {foo: ['alpha']})),
-      'false if not string (array)'
-    )
-    assert.ok(
-      !matches('[foo*=true]', u('a', {foo: true})),
-      'false if not string (boolean, true)'
-    )
-    assert.ok(
-      !matches('[foo*=false]', u('a', {foo: false})),
-      'false if not string (boolean, false)'
-    )
-  })
-
-  await t.test('attributes, contains in a list: `[attr~=value]`', () => {
-    assert.ok(
-      matches('[foo~=alpha]', u('a', {foo: 'alpha'})),
-      'true if attribute matches (string)'
-    )
-    assert.ok(
-      matches('[foo~=1]', u('a', {foo: 1})),
-      'true if attribute matches (number)'
-    )
-    assert.ok(
-      matches('[foo~=alpha]', u('a', {foo: ['alpha']})),
-      'true if attribute matches (array)'
-    )
-    assert.ok(
-      matches('[foo~="alpha,bravo"]', u('a', {foo: ['alpha', 'bravo']})),
-      'true if attribute matches (array, 2)'
-    )
-    assert.ok(
-      matches('[foo~=true]', u('a', {foo: true})),
-      'true if attribute matches (boolean, true)'
-    )
-    assert.ok(
-      matches('[foo~=false]', u('a', {foo: false})),
-      'true if attribute matches (boolean, false)'
-    )
-    assert.ok(
-      !matches('[foo~=null]', u('a', {foo: null})),
-      'false if attribute is missing (null)'
-    )
-    assert.ok(
-      !matches('[foo~=undefined]', u('a', {foo: undefined})),
-      'false if attribute is missing (undefined)'
-    )
-    assert.ok(
-      !matches('[foo~=alpha]', u('a', {foo: 'bravo'})),
-      'false if not matches (string)'
-    )
-    assert.ok(
-      !matches('[foo~=1]', u('a', {foo: 2})),
-      'false if not matches (number)'
-    )
-    assert.ok(
-      !matches('[foo~=alpha]', u('a', {foo: ['bravo']})),
-      'false if not matches (array)'
-    )
-    assert.ok(
-      !matches('[foo~="alpha,bravo"]', u('a', {foo: ['charlie', 'delta']})),
-      'false if not matches (array, 2)'
-    )
-    assert.ok(
-      !matches('[foo~=true]', u('a', {foo: false})),
-      'false if not matches (boolean, true)'
-    )
-    assert.ok(
-      !matches('[foo=false]', u('a', {foo: true})),
-      'false if not matches (boolean, false)'
-    )
-
-    assert.ok(
-      matches('[foo~=bravo]', u('a', {foo: ['alpha', 'bravo', 'charlie']})),
-      'true if attribute is contained (array of strings)'
-    )
-    assert.ok(
-      matches('[foo~=bravo]', u('a', {foo: ['alpha', 'bravo', 'charlie']})),
-      'true if attribute is contained (array of strings)'
-    )
-    assert.ok(
-      !matches('[foo~=delta]', u('a', {foo: ['alpha', 'bravo', 'charlie']})),
-      'false if attribute is not contained (array of strings)'
-    )
-    assert.ok(
-      !matches('[foo~=delta]', u('a', {foo: ['alpha', 'bravo', 'charlie']})),
-      'false if attribute is not contained (array of strings)'
-    )
-  })
-
-  await t.test('pseudo-classes', async (t) => {
-    await t.test(':is', () => {
-      assert.ok(matches(':is(a, [b])', u('a')), 'true if any matches (type)')
-      assert.ok(
-        matches(':is(a, [b])', u('c', {b: 1})),
-        'true if any matches (attribute)'
+  await t.test(
+    'attributes, contains in a list: `[attr~=value]`',
+    async function (t) {
+      await t.test(
+        'should yield `true` if attribute matches (string)',
+        async function () {
+          assert.ok(matches('[foo~=alpha]', u('a', {foo: 'alpha'})))
+        }
       )
-      assert.ok(!matches(':is(a, [b])', u('c')), 'false if nothing matches')
-      assert.ok(
-        !matches(':is(a, [b])', u('c', [u('a')])),
-        'false if children match'
+
+      await t.test(
+        'should yield `true` if attribute matches (number)',
+        async function () {
+          assert.ok(matches('[foo~=1]', u('a', {foo: 1})))
+        }
       )
+
+      await t.test(
+        'should yield `true` if attribute matches (array)',
+        async function () {
+          assert.ok(matches('[foo~=alpha]', u('a', {foo: ['alpha']})))
+        }
+      )
+
+      await t.test(
+        'should yield `true` if attribute matches (array, 2)',
+        async function () {
+          assert.ok(
+            matches('[foo~="alpha,bravo"]', u('a', {foo: ['alpha', 'bravo']}))
+          )
+        }
+      )
+
+      await t.test(
+        'should yield `true` if attribute matches (boolean, true)',
+        async function () {
+          assert.ok(matches('[foo~=true]', u('a', {foo: true})))
+        }
+      )
+
+      await t.test(
+        'should yield `true` if attribute matches (boolean, false)',
+        async function () {
+          assert.ok(matches('[foo~=false]', u('a', {foo: false})))
+        }
+      )
+
+      await t.test(
+        'should yield `false` if attribute is missing (null)',
+        async function () {
+          assert.ok(!matches('[foo~=null]', u('a', {foo: null})))
+        }
+      )
+
+      await t.test(
+        'should yield `false` if attribute is missing (undefined)',
+        async function () {
+          assert.ok(!matches('[foo~=undefined]', u('a', {foo: undefined})))
+        }
+      )
+
+      await t.test(
+        'should yield `false` if not matches (string)',
+        async function () {
+          assert.ok(!matches('[foo~=alpha]', u('a', {foo: 'bravo'})))
+        }
+      )
+
+      await t.test(
+        'should yield `false` if not matches (number)',
+        async function () {
+          assert.ok(!matches('[foo~=1]', u('a', {foo: 2})))
+        }
+      )
+
+      await t.test(
+        'should yield `false` if not matches (array)',
+        async function () {
+          assert.ok(!matches('[foo~=alpha]', u('a', {foo: ['bravo']})))
+        }
+      )
+
+      await t.test(
+        'should yield `false` if not matches (array, 2)',
+        async function () {
+          assert.ok(
+            !matches(
+              '[foo~="alpha,bravo"]',
+              u('a', {foo: ['charlie', 'delta']})
+            )
+          )
+        }
+      )
+
+      await t.test(
+        'should yield `false` if not matches (boolean, true)',
+        async function () {
+          assert.ok(!matches('[foo~=true]', u('a', {foo: false})))
+        }
+      )
+
+      await t.test(
+        'should yield `false` if not matches (boolean, false)',
+        async function () {
+          assert.ok(!matches('[foo=false]', u('a', {foo: true})))
+        }
+      )
+
+      await t.test(
+        'should yield `true` if attribute is contained (array of strings)',
+        async function () {
+          assert.ok(
+            matches(
+              '[foo~=bravo]',
+              u('a', {foo: ['alpha', 'bravo', 'charlie']})
+            )
+          )
+        }
+      )
+
+      await t.test(
+        'should yield `true` if attribute is contained (array of strings)',
+        async function () {
+          assert.ok(
+            matches(
+              '[foo~=bravo]',
+              u('a', {foo: ['alpha', 'bravo', 'charlie']})
+            )
+          )
+        }
+      )
+
+      await t.test(
+        'should yield `false` if attribute is not contained (array of strings)',
+        async function () {
+          assert.ok(
+            !matches(
+              '[foo~=delta]',
+              u('a', {foo: ['alpha', 'bravo', 'charlie']})
+            )
+          )
+        }
+      )
+
+      await t.test(
+        'should yield `false` if attribute is not contained (array of strings)',
+        async function () {
+          assert.ok(
+            !matches(
+              '[foo~=delta]',
+              u('a', {foo: ['alpha', 'bravo', 'charlie']})
+            )
+          )
+        }
+      )
+    }
+  )
+
+  await t.test('pseudo-classes', async function (t) {
+    await t.test(':is', async function (t) {
+      await t.test(
+        'should yield `true` if any matches (type)',
+        async function () {
+          assert.ok(matches(':is(a, [b])', u('a')))
+        }
+      )
+
+      await t.test(
+        'should yield `true` if any matches (attribute)',
+        async function () {
+          assert.ok(matches(':is(a, [b])', u('c', {b: 1})))
+        }
+      )
+
+      await t.test(
+        'should yield `false` if nothing matches',
+        async function () {
+          assert.ok(!matches(':is(a, [b])', u('c')))
+        }
+      )
+
+      await t.test('should yield `false` if children match', async function () {
+        assert.ok(!matches(':is(a, [b])', u('c', [u('a')])))
+      })
     })
 
-    await t.test(':not()', () => {
-      assert.ok(!matches(':not(a, [b])', u('a')), 'false if any matches (type)')
-      assert.ok(
-        !matches(':not(a, [b])', u('c', {b: 1})),
-        'false if any matches (attribute)'
+    await t.test(':not()', async function (t) {
+      await t.test(
+        'should yield `false` if any matches (type)',
+        async function () {
+          assert.ok(!matches(':not(a, [b])', u('a')))
+        }
       )
-      assert.ok(matches(':not(a, [b])', u('c')), 'true if nothing matches')
-      assert.ok(
-        matches(':not(a, [b])', u('c', [u('a')])),
-        'true if children match'
+
+      await t.test(
+        'should yield `false` if any matches (attribute)',
+        async function () {
+          assert.ok(!matches(':not(a, [b])', u('c', {b: 1})))
+        }
       )
+
+      await t.test('should yield `true` if nothing matches', async function () {
+        assert.ok(matches(':not(a, [b])', u('c')))
+      })
+
+      await t.test('should yield `true` if children match', async function () {
+        assert.ok(matches(':not(a, [b])', u('c', [u('a')])))
+      })
     })
 
-    await t.test(':has', () => {
-      assert.throws(
-        () => {
+    await t.test(':has', async function (t) {
+      await t.test('should throw on empty selectors', async function () {
+        assert.throws(function () {
           matches('a:not(:has())', u('b'))
-        },
-        /Expected rule but "\)" found/,
-        'should throw on empty selectors'
-      )
+        }, /Expected rule but "\)" found/)
+      })
 
-      assert.throws(
-        () => {
+      await t.test('should throw on empty selectors', async function () {
+        assert.throws(function () {
           matches('a:has()', u('b'))
-        },
-        /Expected rule but "\)" found/,
-        'should throw on empty selectors'
+        }, /Expected rule but "\)" found/)
+      })
+
+      await t.test(
+        'should not match the scope element (#1)',
+        async function () {
+          assert.ok(!matches('a:has(b)', u('a', [u('c')])))
+        }
       )
 
-      assert.ok(
-        !matches('a:has(b)', u('a', [u('c')])),
-        'should not match the scope element (#1)'
-      )
-      assert.ok(
-        matches('a:has(b)', u('a', [u('b')])),
-        'should not match the scope element (#2)'
-      )
-      assert.ok(
-        matches('a:has(b)', u('a', [u('b')])),
-        'true if children match the descendant selector'
-      )
-      assert.ok(
-        !matches('a:has(b)', u('a', [u('c')])),
-        'false if no children match the descendant selector'
-      )
-      assert.ok(
-        matches('a:has(c)', u('a', [u('b'), u('c')])),
-        'true if descendants match the descendant selector'
-      )
-      assert.ok(
-        !matches('a:has(d)', u('a', [u('b', [u('c')])])),
-        'false if no descendants match the descendant selector'
+      await t.test(
+        'should not match the scope element (#2)',
+        async function () {
+          assert.ok(matches('a:has(b)', u('a', [u('b')])))
+        }
       )
 
-      assert.ok(
-        matches('a:has(b + c)', u('a', [u('b'), u('c')])),
-        'should support a nested next-sibling selector (#1)'
+      await t.test(
+        'should yield `true` if children match the descendant selector',
+        async function () {
+          assert.ok(matches('a:has(b)', u('a', [u('b')])))
+        }
       )
 
-      assert.ok(
-        !matches('a:has(b + a)', u('a', [u('b'), u('b')])),
-        'should support a nested next-sibling selector (#2)'
+      await t.test(
+        'should yield `false` if no children match the descendant selector',
+        async function () {
+          assert.ok(!matches('a:has(b)', u('a', [u('c')])))
+        }
       )
 
-      assert.ok(
-        matches('a:has([c])', u('a', [u('b', {c: 'd'})])),
-        'should add `:scope` to sub-selectors (#1)'
-      )
-      assert.ok(
-        !matches('a:has([b])', u('a', {b: 'c'}, [u('d')])),
-        'should add `:scope` to sub-selectors (#2)'
-      )
-      assert.ok(
-        !matches('a:has(a, :scope c)', u('a', u('b'))),
-        'should add `:scope` to all sub-selectors (#2)'
+      await t.test(
+        'should yield `true` if descendants match the descendant selector',
+        async function () {
+          assert.ok(matches('a:has(c)', u('a', [u('b'), u('c')])))
+        }
       )
 
-      assert.ok(
-        matches('a:not(:has(b, c, d))', u('a', [])),
-        'should add `:scope` to all sub-selectors (#3)'
+      await t.test(
+        'should yield `false` if no descendants match the descendant selector',
+        async function () {
+          assert.ok(!matches('a:has(d)', u('a', [u('b', [u('c')])])))
+        }
       )
 
-      assert.ok(
-        matches('a:not(:has(d, e, f))', u('a', [u('b', 'c')])),
-        'should add `:scope` to all sub-selectors (#4)'
+      await t.test(
+        'should support a nested next-sibling selector (#1)',
+        async function () {
+          assert.ok(matches('a:has(b + c)', u('a', [u('b'), u('c')])))
+        }
       )
 
-      assert.ok(
-        !matches('a:has(:is(c, d))', u('a', [u('b')])),
-        'should ignore commas in parens (#1)'
-      )
-      assert.ok(
-        matches('a:has(:is(b, c))', u('a', [u('b')])),
-        'should ignore commas in parens (#2)'
+      await t.test(
+        'should support a nested next-sibling selector (#2)',
+        async function () {
+          assert.ok(!matches('a:has(b + a)', u('a', [u('b'), u('b')])))
+        }
       )
 
-      assert.ok(
-        !matches('a:has(:is(c), :is(d))', u('a', [u('b')])),
-        'should support multiple relative selectors (#1)'
-      )
-      assert.ok(
-        matches('a:has(:is(c), :is(b))', u('a', [u('b')])),
-        'should support multiple relative selectors (#2)'
+      await t.test(
+        'should add `:scope` to sub-selectors (#1)',
+        async function () {
+          assert.ok(matches('a:has([c])', u('a', [u('b', {c: 'd'})])))
+        }
       )
 
-      // This checks white-space.
-      assert.ok(matches('a:has( b)', u('a', [u('b')])), 'assertion (#1)')
-      assert.ok(matches('a:has( b  )', u('a', [u('b')])), 'assertion (#2)')
-      assert.ok(matches('a:has(b )', u('a', [u('b')])), 'assertion (#3)')
-      assert.ok(
-        matches('a:has( b  ,\t p )', u('a', [u('b')])),
-        'assertion (#4)'
+      await t.test(
+        'should add `:scope` to sub-selectors (#2)',
+        async function () {
+          assert.ok(!matches('a:has([b])', u('a', {b: 'c'}, [u('d')])))
+        }
       )
+
+      await t.test(
+        'should add `:scope` to all sub-selectors (#2)',
+        async function () {
+          assert.ok(!matches('a:has(a, :scope c)', u('a', u('b'))))
+        }
+      )
+
+      await t.test(
+        'should add `:scope` to all sub-selectors (#3)',
+        async function () {
+          assert.ok(matches('a:not(:has(b, c, d))', u('a', [])))
+        }
+      )
+
+      await t.test(
+        'should add `:scope` to all sub-selectors (#4)',
+        async function () {
+          assert.ok(matches('a:not(:has(d, e, f))', u('a', [u('b', 'c')])))
+        }
+      )
+
+      await t.test('should ignore commas in parens (#1)', async function () {
+        assert.ok(!matches('a:has(:is(c, d))', u('a', [u('b')])))
+      })
+
+      await t.test('should ignore commas in parens (#2)', async function () {
+        assert.ok(matches('a:has(:is(b, c))', u('a', [u('b')])))
+      })
+
+      await t.test(
+        'should support multiple relative selectors (#1)',
+        async function () {
+          assert.ok(!matches('a:has(:is(c), :is(d))', u('a', [u('b')])))
+        }
+      )
+
+      await t.test(
+        'should support multiple relative selectors (#2)',
+        async function () {
+          assert.ok(matches('a:has(:is(c), :is(b))', u('a', [u('b')])))
+        }
+      )
+
+      await t.test('assertion (#1)', async function () {
+        // This checks white-space.
+        assert.ok(matches('a:has( b)', u('a', [u('b')])))
+      })
+
+      await t.test('assertion (#2)', async function () {
+        assert.ok(matches('a:has( b  )', u('a', [u('b')])))
+      })
+
+      await t.test('assertion (#3)', async function () {
+        assert.ok(matches('a:has(b )', u('a', [u('b')])))
+      })
+
+      await t.test('assertion (#4)', async function () {
+        assert.ok(matches('a:has( b  ,\t p )', u('a', [u('b')])))
+      })
 
       // Note: These should not be uncommented, but that’s not supported by the CSS parser.
       // assert.ok(
       //   matches('a:has(> b)', u('a', [u('b')])),
-      //   'true for relative direct child selector'
+      //   'should yield `true` for relative direct child selector'
       // )
-      // assert.ok(!
-      //   matches('a:has(> c)', u('a', [u('b', [u('c')])])),
-      //   'false for relative direct child selectors'
+      // assert.ok(
+      //   !matches('a:has(> c)', u('a', [u('b', [u('c')])])),
+      //   'should yield `false` for relative direct child selectors'
       // )
       // assert.ok(
       //   matches('a:has(> c, > b)', u('a', [u('b', [u('b')])])),
@@ -583,29 +848,42 @@ test('select.matches()', async (t) => {
 
     const emptyBlankPseudos = [':empty', ':blank']
 
-    let index = -1
+    for (const pseudo of emptyBlankPseudos) {
+      await t.test(pseudo, async function (t) {
+        await t.test('should yield `true` for void node', async function () {
+          assert.ok(matches(pseudo, u('a')))
+        })
 
-    while (++index < emptyBlankPseudos.length) {
-      const pseudo = emptyBlankPseudos[index]
-
-      await t.test(pseudo, () => {
-        assert.ok(matches(pseudo, u('a')), 'true for void node')
-        assert.ok(
-          matches(pseudo, u('a', [])),
-          'true for parent without children'
+        await t.test(
+          'should yield `true` for parent without children',
+          async function () {
+            assert.ok(matches(pseudo, u('a', [])))
+          }
         )
-        assert.ok(!matches(pseudo, u('a', '')), 'false for falsey literal')
-        assert.ok(!matches(pseudo, u('a', [u('b')])), 'false if w/ nodes')
-        assert.ok(!matches(pseudo, u('a', 'b')), 'false if w/ literal')
+
+        await t.test(
+          'should yield `false` for falsey literal',
+          async function () {
+            assert.ok(!matches(pseudo, u('a', '')))
+          }
+        )
+
+        await t.test('should yield `false` if w/ nodes', async function () {
+          assert.ok(!matches(pseudo, u('a', [u('b')])))
+        })
+
+        await t.test('should yield `false` if w/ literal', async function () {
+          assert.ok(!matches(pseudo, u('a', 'b')))
+        })
       })
     }
 
-    await t.test(':root', () => {
-      assert.ok(matches(':root', u('a')), 'true')
+    await t.test(':root', function () {
+      assert.ok(matches(':root', u('a')))
     })
 
-    await t.test(':scope', () => {
-      assert.ok(matches(':scope', u('a')), 'true')
+    await t.test(':scope', function () {
+      assert.ok(matches(':scope', u('a')))
     })
   })
 })

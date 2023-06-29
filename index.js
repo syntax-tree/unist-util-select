@@ -84,6 +84,7 @@ export function selectAll(selector, tree) {
  * @param {Node | null | undefined} tree
  *   Tree to search.
  * @returns {SelectState}
+ *   State.
  */
 function createState(selector, tree) {
   return {
