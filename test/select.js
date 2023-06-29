@@ -76,7 +76,7 @@ test('select.select()', async function (t) {
     )
 
     await t.test('should yield nothing if not given a node', async function () {
-      assert.equal(select('*'), null)
+      assert.equal(select('*'), undefined)
     })
 
     await t.test('should yield the node if given a node', async function () {
@@ -184,7 +184,7 @@ test('select.select()', async function (t) {
             u('b', 'Delta')
           ])
         ),
-        null
+        undefined
       )
     })
   })
@@ -227,7 +227,7 @@ test('select.select()', async function (t) {
           'c ~ b',
           u('a', [u('b', 'Alpha'), u('c', 'Bravo'), u('d', 'Charlie')])
         ),
-        null
+        undefined
       )
     })
   })
@@ -258,7 +258,7 @@ test('select.select()', async function (t) {
               'c:first-child',
               u('a', [u('b', 'Alpha'), u('c', 'Bravo'), u('d', 'Charlie')])
             ),
-            null
+            undefined
           )
         }
       )
@@ -289,7 +289,7 @@ test('select.select()', async function (t) {
               'c:last-child',
               u('a', [u('b', 'Alpha'), u('c', 'Bravo'), u('d', 'Charlie')])
             ),
-            null
+            undefined
           )
         }
       )
@@ -320,7 +320,7 @@ test('select.select()', async function (t) {
               'c:only-child',
               u('a', [u('b', 'Alpha'), u('c', 'Bravo'), u('d', 'Charlie')])
             ),
-            null
+            undefined
           )
         }
       )
@@ -676,7 +676,7 @@ test('select.select()', async function (t) {
       )
 
       await t.test('should return nothing without matches', async function () {
-        assert.equal(select('b:first-of-type', u('a', [])), null)
+        assert.equal(select('b:first-of-type', u('a', [])), undefined)
       })
     })
 
@@ -702,7 +702,7 @@ test('select.select()', async function (t) {
       )
 
       await t.test('should return nothing without matches', async function () {
-        assert.equal(select('b:last-of-type', u('a', [])), null)
+        assert.equal(select('b:last-of-type', u('a', [])), undefined)
       })
     })
 
@@ -737,13 +737,13 @@ test('select.select()', async function (t) {
                 u('c', 'Foxtrot')
               ])
             ),
-            null
+            undefined
           )
         }
       )
 
       await t.test('should return nothing without matches', async function () {
-        assert.equal(select('b:only-of-type', u('a', [])), null)
+        assert.equal(select('b:only-of-type', u('a', [])), undefined)
       })
     })
 

@@ -44,7 +44,7 @@ export function matches(selector, node) {
  *   CSS selector, such as (`heading`, `link, linkReference`).
  * @param {Node | NodeLike | null | undefined} [tree]
  *   Tree to search.
- * @returns {Node | null}
+ * @returns {Node | undefined}
  *   First node in `tree` that matches `selector` or `null` if nothing is
  *   found.
  *
@@ -54,8 +54,7 @@ export function select(selector, tree) {
   const state = createState(selector, tree)
   state.one = true
   walk(state, tree || undefined)
-  // To do next major: return `undefined`.
-  return state.results[0] || null
+  return state.results[0]
 }
 
 /**
