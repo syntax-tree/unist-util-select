@@ -27,7 +27,7 @@ test('select.select()', async (t) => {
       () => {
         select('@supports (transform-origin: 5% 5%) {}', u('a'))
       },
-      /Error: Rule expected but "@" found./,
+      /Expected rule but "@" found/,
       'should throw w/ invalid selector (2)'
     )
 
@@ -35,7 +35,7 @@ test('select.select()', async (t) => {
       () => {
         select('[foo%=bar]', u('a'))
       },
-      /Error: Expected "=" but "%" found./,
+      /Expected a valid attribute selector operator/,
       'should throw on invalid attribute operators'
     )
 
@@ -51,7 +51,7 @@ test('select.select()', async (t) => {
       () => {
         select(':nth-foo(2n+1)', u('a'))
       },
-      /Error: Unknown pseudo-selector `nth-foo`/,
+      /Unknown pseudo-class/,
       'should throw on invalid pseudo class “functions”'
     )
 
@@ -59,22 +59,28 @@ test('select.select()', async (t) => {
       () => {
         select('::before', u('a'))
       },
-      /Error: Unexpected pseudo-element or empty pseudo-class/,
+      /Invalid selector: `::before`/,
       'should throw on invalid pseudo elements'
     )
   })
 
   await t.test('general', () => {
-    assert.equal(
-      select('', u('a')),
-      null,
-      'nothing for the empty string as selector'
+    assert.throws(
+      () => {
+        select('', u('a'))
+      },
+      /Expected rule but end of input reached/,
+      'should throw for the empty string as selector'
     )
-    assert.equal(
-      select(' ', u('a')),
-      null,
-      'nothing for a white-space only selector'
+
+    assert.throws(
+      () => {
+        select(' ', u('a'))
+      },
+      /Expected rule but end of input reached/,
+      'should throw for a white-space only selector'
     )
+
     assert.equal(select('*'), null, 'nothing if not given a node')
 
     assert.deepEqual(select('*', u('a')), u('a'), 'the node if given a node')
@@ -667,19 +673,11 @@ test('select.select()', async (t) => {
     })
   })
 
-  await t.test(':any', () => {
+  await t.test(':is', () => {
     assert.deepEqual(
-      select('y:any(:first-child)', u('x', [u('y', 'a'), u('y', 'b')])),
+      select('y:is(:first-child)', u('x', [u('y', 'a'), u('y', 'b')])),
       u('y', 'a'),
-      'should support parent-sensitive `:any`'
-    )
-  })
-
-  await t.test(':matches', () => {
-    assert.deepEqual(
-      select('y:matches(:first-child)', u('x', [u('y', 'a'), u('y', 'b')])),
-      u('y', 'a'),
-      'should support parent-sensitive `:matches`'
+      'should support parent-sensitive `:is`'
     )
   })
 

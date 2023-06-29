@@ -10,7 +10,6 @@ import {matches} from '../index.js'
 test('select.matches()', async (t) => {
   assert.equal(matches('*', u('root', [])), true, 'should work (1)')
   assert.equal(matches('*', {type: 'a', children: []}), true, 'should work (2)')
-
   await t.test('invalid selector', () => {
     assert.throws(
       () => {
@@ -34,7 +33,7 @@ test('select.matches()', async (t) => {
       () => {
         matches('@supports (transform-origin: 5% 5%) {}', u('root', []))
       },
-      /Error: Rule expected but "@" found./,
+      /Expected rule but "@" found/,
       'should throw w/ invalid selector (2)'
     )
 
@@ -42,7 +41,7 @@ test('select.matches()', async (t) => {
       () => {
         matches('[foo%=bar]', u('root', []))
       },
-      /Error: Expected "=" but "%" found./,
+      /Expected a valid attribute selector operator/,
       'should throw on invalid attribute operators'
     )
 
@@ -58,7 +57,7 @@ test('select.matches()', async (t) => {
       () => {
         matches(':nth-foo(2n+1)', u('root', []))
       },
-      /Error: Unknown pseudo-selector `nth-foo`/,
+      /Unknown pseudo-class: "nth-foo"/,
       'should throw on invalid pseudo class “functions”'
     )
 
@@ -66,7 +65,7 @@ test('select.matches()', async (t) => {
       () => {
         matches('::before', u('root', []))
       },
-      /Error: Unexpected pseudo-element or empty pseudo-class/,
+      /Invalid selector: `::before`/,
       'should throw on invalid pseudo elements'
     )
 
@@ -127,21 +126,29 @@ test('select.matches()', async (t) => {
         () => {
           matches(':' + pseudo + '()', u('root', []))
         },
-        /n-th rule couldn't be parsed/,
+        /Formula parse error/,
         'should throw on `' + pseudo + '()`'
       )
     }
   })
 
   await t.test('general', () => {
-    assert.ok(
-      !matches('', u('root', [])),
-      'false for the empty string as selector'
+    assert.throws(
+      () => {
+        matches('', u('root', []))
+      },
+      /Expected rule but end of input reached/,
+      'should throw on empty selectors'
     )
-    assert.ok(
-      !matches(' ', u('root', [])),
-      'false for a white-space only selector'
+
+    assert.throws(
+      () => {
+        matches(' ', u('root', []))
+      },
+      /Expected rule but end of input reached/,
+      'should throw for a white-space only selector'
     )
+
     assert.ok(!matches('*'), 'false if not given a node')
     assert.ok(
       matches('*', /** @type {Literal} */ ({type: 'text', value: 'a'})),
@@ -225,7 +232,7 @@ test('select.matches()', async (t) => {
       'true if attribute matches (array)'
     )
     assert.ok(
-      matches('[foo=alpha,bravo]', u('a', {foo: ['alpha', 'bravo']})),
+      matches('[foo="alpha,bravo"]', u('a', {foo: ['alpha', 'bravo']})),
       'true if attribute matches (array, 2)'
     )
     assert.ok(
@@ -258,7 +265,7 @@ test('select.matches()', async (t) => {
       'false if not matches (array)'
     )
     assert.ok(
-      !matches('[foo=alpha,bravo]', u('a', {foo: ['charlie', 'delta']})),
+      !matches('[foo="alpha,bravo"]', u('a', {foo: ['charlie', 'delta']})),
       'false if not matches (array, 2)'
     )
     assert.ok(
@@ -368,7 +375,7 @@ test('select.matches()', async (t) => {
       'true if attribute matches (array)'
     )
     assert.ok(
-      matches('[foo~=alpha,bravo]', u('a', {foo: ['alpha', 'bravo']})),
+      matches('[foo~="alpha,bravo"]', u('a', {foo: ['alpha', 'bravo']})),
       'true if attribute matches (array, 2)'
     )
     assert.ok(
@@ -400,7 +407,7 @@ test('select.matches()', async (t) => {
       'false if not matches (array)'
     )
     assert.ok(
-      !matches('[foo~=alpha,bravo]', u('a', {foo: ['charlie', 'delta']})),
+      !matches('[foo~="alpha,bravo"]', u('a', {foo: ['charlie', 'delta']})),
       'false if not matches (array, 2)'
     )
     assert.ok(
@@ -431,31 +438,18 @@ test('select.matches()', async (t) => {
   })
 
   await t.test('pseudo-classes', async (t) => {
-    const anyMatchesPseudos = [':any', ':matches']
-    let index = -1
-
-    while (++index < anyMatchesPseudos.length) {
-      const pseudo = anyMatchesPseudos[index]
-
-      await t.test(pseudo, () => {
-        assert.ok(
-          matches(pseudo + '(a, [b])', u('a')),
-          'true if any matches (type)'
-        )
-        assert.ok(
-          matches(pseudo + '(a, [b])', u('c', {b: 1})),
-          'true if any matches (attribute)'
-        )
-        assert.ok(
-          !matches(pseudo + '(a, [b])', u('c')),
-          'false if nothing matches'
-        )
-        assert.ok(
-          !matches(pseudo + '(a, [b])', u('c', [u('a')])),
-          'false if children match'
-        )
-      })
-    }
+    await t.test(':is', () => {
+      assert.ok(matches(':is(a, [b])', u('a')), 'true if any matches (type)')
+      assert.ok(
+        matches(':is(a, [b])', u('c', {b: 1})),
+        'true if any matches (attribute)'
+      )
+      assert.ok(!matches(':is(a, [b])', u('c')), 'false if nothing matches')
+      assert.ok(
+        !matches(':is(a, [b])', u('c', [u('a')])),
+        'false if children match'
+      )
+    })
 
     await t.test(':not()', () => {
       assert.ok(!matches(':not(a, [b])', u('a')), 'false if any matches (type)')
@@ -471,13 +465,21 @@ test('select.matches()', async (t) => {
     })
 
     await t.test(':has', () => {
-      assert.doesNotThrow(() => {
-        matches('a:not(:has())', u('b'))
-      }, 'should not throw on empty selectors')
+      assert.throws(
+        () => {
+          matches('a:not(:has())', u('b'))
+        },
+        /Expected rule but "\)" found/,
+        'should throw on empty selectors'
+      )
 
-      assert.doesNotThrow(() => {
-        matches('a:has()', u('b'))
-      }, 'should not throw on empty selectors')
+      assert.throws(
+        () => {
+          matches('a:has()', u('b'))
+        },
+        /Expected rule but "\)" found/,
+        'should throw on empty selectors'
+      )
 
       assert.ok(
         !matches('a:has(b)', u('a', [u('c')])),
@@ -538,20 +540,20 @@ test('select.matches()', async (t) => {
       )
 
       assert.ok(
-        !matches('a:has(:matches(c, d))', u('a', [u('b')])),
+        !matches('a:has(:is(c, d))', u('a', [u('b')])),
         'should ignore commas in parens (#1)'
       )
       assert.ok(
-        matches('a:has(:matches(b, c))', u('a', [u('b')])),
+        matches('a:has(:is(b, c))', u('a', [u('b')])),
         'should ignore commas in parens (#2)'
       )
 
       assert.ok(
-        !matches('a:has(:matches(c), :matches(d))', u('a', [u('b')])),
+        !matches('a:has(:is(c), :is(d))', u('a', [u('b')])),
         'should support multiple relative selectors (#1)'
       )
       assert.ok(
-        matches('a:has(:matches(c), :matches(b))', u('a', [u('b')])),
+        matches('a:has(:is(c), :is(b))', u('a', [u('b')])),
         'should support multiple relative selectors (#2)'
       )
 
@@ -581,7 +583,7 @@ test('select.matches()', async (t) => {
 
     const emptyBlankPseudos = [':empty', ':blank']
 
-    index = -1
+    let index = -1
 
     while (++index < emptyBlankPseudos.length) {
       const pseudo = emptyBlankPseudos[index]

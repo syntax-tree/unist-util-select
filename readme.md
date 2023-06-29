@@ -90,7 +90,7 @@ const tree = u('blockquote', [
   u('paragraph', [u('text', 'Golf')])
 ])
 
-matches('blockquote, list', tree) // => true
+console.log(matches('blockquote, list', tree)) // => true
 
 console.log(select('code ~ :nth-child(even)', tree))
 // The paragraph with `Delta`
@@ -246,10 +246,9 @@ Yields:
 *   [x] `[attr*=value]` (attribute contains, only works on strings)
 *   [x] `[attr~=value]` (attribute contains, checks if `value` is in the array,
     if there’s an array on the tree, otherwise same as attribute equality)
-*   [x] `:any()` (functional pseudo-class, use `:matches` instead)
+*   [x] `:is()` (functional pseudo-class)
 *   [x] `:has()` (functional pseudo-class)
     Relative selectors (`:has(> img)`) are not supported, but `:scope` is
-*   [x] `:matches()` (functional pseudo-class)
 *   [x] `:not()` (functional pseudo-class)
 *   [x] `:blank` (pseudo-class, blank and empty are the same: a parent without
     children, or a node without value)
@@ -271,6 +270,8 @@ Yields:
 ###### Notes
 
 *   \* — not supported in `matches`
+
+`:any()` and `:matches()` are renamed to `:is()` in CSS.
 
 ## Types
 

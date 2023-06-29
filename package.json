@@ -49,7 +49,8 @@
   ],
   "dependencies": {
     "@types/unist": "^2.0.0",
-    "css-selector-parser": "^1.0.0",
+    "css-selector-parser": "^2.0.0",
+    "devlop": "^1.1.0",
     "nth-check": "^2.0.0",
     "zwitch": "^2.0.0"
   },

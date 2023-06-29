@@ -2,12 +2,15 @@
  * @typedef {import('unist').Position} Position
  * @typedef {import('unist').Node} Node
  * @typedef {import('./lib/types.js').SelectState} SelectState
+ */
+
+/**
  * @typedef {Record<string, unknown> & {type: string, position?: Position | undefined}} NodeLike
  */
 
-import {queryToSelectors, walk} from './lib/walk.js'
 import {parse} from './lib/parse.js'
 import {parent} from './lib/util.js'
+import {walk} from './lib/walk.js'
 
 /**
  * Check that the given `node` matches `selector`.
@@ -85,7 +88,7 @@ export function selectAll(selector, tree) {
 function createState(selector, tree) {
   return {
     // State of the query.
-    rootQuery: queryToSelectors(parse(selector)),
+    rootQuery: parse(selector),
     results: [],
     scopeNodes: tree
       ? parent(tree) &&
