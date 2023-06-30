@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {u} from 'unist-builder'
-import {select} from '../index.js'
+import {select} from 'unist-util-select'
 
 test('select.select()', async function (t) {
   await t.test('invalid selectors', async function (t) {

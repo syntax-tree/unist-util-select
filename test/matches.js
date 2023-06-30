@@ -5,7 +5,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {u} from 'unist-builder'
-import {matches} from '../index.js'
+import {matches} from 'unist-util-select'
 
 test('select.matches()', async function (t) {
   await t.test('should work (1)', async function () {
