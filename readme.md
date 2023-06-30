@@ -248,8 +248,7 @@ Yields:
 *   [x] `[attr~=value]` (attribute contains, checks if `value` is in the array,
     if there’s an array on the tree, otherwise same as attribute equality)
 *   [x] `:is()` (functional pseudo-class)
-*   [x] `:has()` (functional pseudo-class)
-    Relative selectors (`:has(> img)`) are not supported, but `:scope` is
+*   [x] `:has()` (functional pseudo-class; also supports `a:has(> b)`)
 *   [x] `:not()` (functional pseudo-class)
 *   [x] `:blank` (pseudo-class, blank and empty are the same: a parent without
     children, or a node without value)
@@ -271,8 +270,7 @@ Yields:
 ###### Notes
 
 *   \* — not supported in `matches`
-
-`:any()` and `:matches()` are renamed to `:is()` in CSS.
+*   `:any()` and `:matches()` are renamed to `:is()` in CSS
 
 ## Types
 

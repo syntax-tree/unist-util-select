@@ -831,19 +831,18 @@ test('select.matches()', async function (t) {
         assert.ok(matches('a:has( b  ,\t p )', u('a', [u('b')])))
       })
 
-      // Note: These should not be uncommented, but that’s not supported by the CSS parser.
-      // assert.ok(
-      //   matches('a:has(> b)', u('a', [u('b')])),
-      //   'should yield `true` for relative direct child selector'
-      // )
-      // assert.ok(
-      //   !matches('a:has(> c)', u('a', [u('b', [u('c')])])),
-      //   'should yield `false` for relative direct child selectors'
-      // )
-      // assert.ok(
-      //   matches('a:has(> c, > b)', u('a', [u('b', [u('b')])])),
-      //   'should support a list of relative selectors'
-      // )
+      assert.ok(
+        matches('a:has(> b)', u('a', [u('b')])),
+        'should yield `true` for relative direct child selector'
+      )
+      assert.ok(
+        !matches('a:has(> c)', u('a', [u('b', [u('c')])])),
+        'should yield `false` for relative direct child selectors'
+      )
+      assert.ok(
+        matches('a:has(> c, > b)', u('a', [u('b', [u('b')])])),
+        'should support a list of relative selectors'
+      )
     })
 
     const emptyBlankPseudos = [':empty', ':blank']
