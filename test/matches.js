@@ -639,6 +639,56 @@ test('select.matches()', async function (t) {
     }
   )
 
+  await t.test('attributes, case modifiers `[attr i]`', async function (t) {
+    await t.test(
+      'should throw when using a modifier in a wrong place',
+      async function () {
+        assert.throws(function () {
+          matches('[x y]', u('a'))
+        }, /Expected a valid attribute selector operator/)
+      }
+    )
+
+    await t.test(
+      'should throw when using an unknown modifier',
+      async function () {
+        assert.throws(function () {
+          matches('[x=y z]', u('a'))
+        }, /Unknown attribute case sensitivity modifier/)
+      }
+    )
+
+    await t.test(
+      'should match sensitively (default) with `s` (#1)',
+      async function () {
+        assert.ok(matches('[x=y s]', u('a', {x: 'y'})))
+      }
+    )
+
+    await t.test(
+      'should match sensitively (default) with `s` (#2)',
+      async function () {
+        assert.ok(!matches('[x=y s]', u('a', {x: 'Y'})))
+      }
+    )
+
+    await t.test('should match insensitively with `i` (#1)', async function () {
+      assert.ok(matches('[x=y i]', u('a', {x: 'y'})))
+    })
+
+    await t.test('should match insensitively with `i` (#2)', async function () {
+      assert.ok(matches('[x=y i]', u('a', {x: 'Y'})))
+    })
+
+    await t.test('should match insensitively with `i` (#3)', async function () {
+      assert.ok(matches('[x=Y i]', u('a', {x: 'y'})))
+    })
+
+    await t.test('should match insensitively with `i` (#4)', async function () {
+      assert.ok(matches('[x=Y i]', u('a', {x: 'Y'})))
+    })
+  })
+
   await t.test('pseudo-classes', async function (t) {
     await t.test(':is', async function (t) {
       await t.test(
