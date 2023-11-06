@@ -98,9 +98,12 @@ test('select.matches()', async function (t) {
 
     for (const pseudo of simplePseudos) {
       await t.test('should throw on `' + pseudo + '`', async function () {
-        assert.throws(function () {
-          matches(':' + pseudo, u('root', []))
-        }, new RegExp('Error: Cannot use `:' + pseudo + '` without parent'))
+        assert.throws(
+          function () {
+            matches(':' + pseudo, u('root', []))
+          },
+          new RegExp('Error: Cannot use `:' + pseudo + '` without parent')
+        )
       })
     }
 
