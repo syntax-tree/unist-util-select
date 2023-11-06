@@ -438,6 +438,15 @@ test('select.selectAll()', async function (t) {
           [u('b', 'Bravo'), u('b', 'Delta'), u('b', 'Foxtrot')]
         )
       })
+
+      await t.test(
+        'should throw on unsupported `of` syntax',
+        async function () {
+          assert.throws(function () {
+            selectAll(':nth-child(odd of a)', u('a'))
+          }, /Expected `nth` formula, such as `even` or `2n\+1` \(`of` is not yet supported\)/)
+        }
+      )
     })
 
     await t.test(':nth-last-child', async function (t) {
