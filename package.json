@@ -10,7 +10,7 @@
     "@types/unist": "^3.0.0",
     "css-selector-parser": "^3.0.0",
     "devlop": "^1.1.0",
-    "nth-check": "^2.0.0",
+    "nth-check": "^3.0.0",
     "zwitch": "^2.0.0"
   },
   "description": "unist utility to select nodes with CSS-like selectors",
